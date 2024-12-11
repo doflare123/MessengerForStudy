@@ -2,6 +2,7 @@ package com.example.forstudy;
 
 import android.os.Bundle;
 
+import android.content.Intent;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -10,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +36,10 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setContentView(R.layout.second_activity);
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                EditText group = findViewById(R.id.editText);
+                intent.putExtra("Group", group.getText().toString());
+                startActivity(intent);
             }
         });
     }
