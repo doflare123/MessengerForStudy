@@ -2,3 +2,5 @@
 /backend/node_modules
 backend/package-lock.json
 Messenger/package-lock.json
+/backendWs/node_modules
+backendWs/package-lock.json
