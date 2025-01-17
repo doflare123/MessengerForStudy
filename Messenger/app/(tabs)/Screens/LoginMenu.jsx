@@ -50,7 +50,7 @@ export default function LoginScreen({ navigation }) {
                             <TextInput
                                 style={[styles.lightBorderInput]}
                                 value={password}
-                                secureTextEntry={true}
+                                secureTextEntry={isSecure}
                                 onChangeText={handlePswdChange}
                             />
                             <TouchableOpacity onPress={handleSecureChange}>
@@ -58,7 +58,7 @@ export default function LoginScreen({ navigation }) {
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity>
-                            <Text style={[styles.lightTextBg, {fontSize: 15, marginTop: 0, textAlign: 'right'}]}>Забыли пароль?</Text>
+                            <Text style={[styles.lightTextBg, {fontSize: 15, marginTop: Platform.OS === 'android' ? -60 : 0, textAlign: 'right'}]}>Забыли пароль?</Text>
                         </TouchableOpacity>
                         <View style={styles.viewEnd}>
                             <TouchableOpacity style={[lstyles.enterBtn, styles.lightBtn]}>
