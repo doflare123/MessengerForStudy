@@ -7,11 +7,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles from '../../Styles/Styles.js';
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen() {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [isSecure, setSecure] = useState(true);
     const [lightStyle, setLight] = useState(true);
+
+    const handleNameChange = (text) => {
+        setName(text);
+    };
 
     const handleEmailChange = (text) => {
         setEmail(text);
@@ -25,10 +30,14 @@ export default function LoginScreen({ navigation }) {
         setSecure(!isSecure);
     };
 
-    const toRegisterScreen = () => {
-        navigation.navigate("Registration");
-    }
+    const openUserAgreement = () => {
+        Alert.alert("Пользовательское соглашение");
+    };
     
+    const openPrivacyPolicy = () => {
+        Alert.alert("Политики конфиденциальности");
+    };
+
     return (
         <KeyboardAvoidingView
             style={{flex: 1}}
@@ -39,10 +48,16 @@ export default function LoginScreen({ navigation }) {
                 onPress={Keyboard.dismiss} // скрытие клавиатуры при нажатии вне TextInput
             >
                 <SafeAreaView style={[lightStyle ? styles.lightBg : styles.darkBg, {paddingLeft: 60, paddingRight: 60}]}>
-                    <View style={styles.headerView}>
-                        <Text style={lightStyle ? styles.headerLight : styles.headerDark}>Вход</Text>
+                    <View style={[styles.headerView, {flex: Platform.OS === 'android' ? 0.75 : 0.6, justifyContent: 'flex-end'}]}>
+                        <Text style={[lightStyle ? styles.headerLight : styles.headerDark, {fontSize: 38, marginBottom: 20}]}>Регистрация</Text>
                     </View>
                     <View style={{flex: 1.5}}>
+                        <TextInput
+                            style={lightStyle ? styles.lightBorderInput : styles.darkBorderInput}
+                            value={name}
+                            placeholder="Введите имя"
+                            onChangeText={handleNameChange}
+                        />
                         <TextInput
                             style={lightStyle ? styles.lightBorderInput : styles.darkBorderInput}
                             value={email}
@@ -62,21 +77,25 @@ export default function LoginScreen({ navigation }) {
                                 <Icon name={isSecure ? 'eye-off' : 'eye'} size={24} color="#00000" style={{position: "absolute", right: 20, top: -37}}/>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity>
-                            <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, {fontSize: 15, marginTop: Platform.OS === 'android' ? -60 : 0, textAlign: 'right'}]}>Забыли пароль?</Text>
-                        </TouchableOpacity>
-                        <View style={styles.viewEnd}>
-                            <TouchableOpacity style={[lstyles.enterBtn, lightStyle ? styles.lightBtn : styles.darkBtn]}>
-                                <Text style={[lightStyle ? styles.lightText : styles.darkText, {fontSize: 30}]}>Войти</Text>
+                        <View style={[styles.viewEnd, {marginTop: Platform.OS === 'ios' ? 200 : 0}]}>
+                            <TouchableOpacity style={[lstyles.regBtn, lightStyle ? styles.lightBtn : styles.darkBtn]}>
+                                <Text style={[lightStyle ? styles.lightText : styles.darkText, {fontSize: 30}]}>Регистрация</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{flex: 1}}>
+                    <View style={{flex: Platform.OS === 'android' ? 1 : 0.85}}>
                         <View style={styles.companyLineView}>
                             <View style={[styles.horizontalLine, {marginTop: 60}]}></View>
-                            <TouchableOpacity onPress={toRegisterScreen}>
-                                <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, {fontSize: 18}]}>Зарегистрироваться</Text>
-                            </TouchableOpacity>
+                            <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, lstyles.underText]}>
+                                При создании аккаунта вы соглашаетесь с условиями{' '}
+                                <Text style={[lstyles.link, lstyles.underText]} onPress={openUserAgreement}>
+                                    Пользовательского соглашения
+                                </Text>{' '}
+                                и{' '}
+                                <Text style={[lstyles.link, lstyles.underText]} onPress={openPrivacyPolicy}>
+                                    Политики конфиденциальности
+                                </Text>.
+                            </Text>
                         </View>
                         <View style={styles.viewEnd}>
                             <Text style={lightStyle ? styles.companyLight : styles.companyDark}>©Necrodwarf</Text>
@@ -89,8 +108,15 @@ export default function LoginScreen({ navigation }) {
 }
 
 const lstyles = StyleSheet.create({
-    enterBtn: {
-        width: 250,
+    underText:{
+        fontSize: 12
+    },
+    link: {
+        color: '#3089FF',
+        textDecorationLine: 'underline',
+    },
+    regBtn: {
+        width: 275,
         height: 60,
         justifyContent: 'center',
         alignItems: 'center'
