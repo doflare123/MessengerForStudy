@@ -5,10 +5,10 @@ const User = require('./models/users');
 const { generateSalt, hashPassword, validatePassword } = require('./security/crypt');
 const CreateJWT = require('./security/Create_jwt');
 const connect = require('./database');
-const { execSync } = require('child_process'); // Для синхронного выполнения команд
+const { execSync } = require('child_process');
 
 const app = express();
-const PORT = 8081; // Используем другой порт для тестов
+const PORT = 8081;
 app.use(express.json());
 
 app.post('/api/EnterAccount', async (req, res) => {

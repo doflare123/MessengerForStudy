@@ -43,7 +43,7 @@ async function sendEmailWithCode(recipientEmail, code) {
     console.error('Ошибка отправки письма: ', error);
   }
 }
-
+//это особенный запрос, поэтому здесь придется тебе подругому передвать параметр, примерно так /api/CreateSession?email=example@example.com
 app.get('/api/CreateSession', async (req, res) => {
   try {
     const sessionId = generateSessionId();
@@ -92,6 +92,24 @@ app.post('/api/CheckSession', async (req, res) => {
     });
   }
 });
+
+app.post('/api/RefreshCode', async (req, res) => {
+  const {email, session} = req.body;
+  try {
+    const newCode = generateCode();
+
+    await Session.create({
+      SessionId: session,
+      CodeConfirm: newCode,
+    });
+
+    await sendEmailWithCode(email, newCode);
+
+    res.status(200);
+  } catch (error) {
+    res.status(500);
+  }
+})
 
 connection.sync()
   .then(() => {
