@@ -25,19 +25,9 @@ const User = connection.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: false,
-    },
-    updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: false,
-    },
 }, {
     tableName: 'users',
-    timestamps: false,
+    timestamps: true,
 });
 connection.sync({ alter: true })
 
