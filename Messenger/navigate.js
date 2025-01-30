@@ -3,6 +3,7 @@ import {StyleSheet, TouchableOpacity, Text} from 'react-native';
 import { createStackNavigator} from '@react-navigation/stack';
 import LoginMenu from './app/(tabs)/Screens/LoginMenu';
 import RegisterMenu from './app/(tabs)/Screens/RegisterMenu';
+import CodeVerify from './app/(tabs)/Screens/CodeVerify';
 // import { WebSocketProvider } from './WebSoket/WSConnection';
 
 
@@ -19,6 +20,11 @@ export default function Navigator() {
             <Stack.Screen
                 name="Registration"
                 component={RegisterMenu}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Verify"
+                component={CodeVerify}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
