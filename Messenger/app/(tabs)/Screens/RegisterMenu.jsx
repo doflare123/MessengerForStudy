@@ -46,11 +46,11 @@ export default function RegisterScreen() {
             keyboardVerticalOffset={-250}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <SafeAreaView style={[lightStyle ? styles.lightBg : styles.darkBg, {paddingLeft: 60, paddingRight: 60}]}>                    
+                <SafeAreaView style={[lightStyle ? styles.lightBg : styles.darkBg]}>                    
                     <View style={[styles.headerView, {flex: Platform.OS === 'android' ? 0.75 : 0.6, justifyContent: 'flex-end'}]}>
                         <Text style={[lightStyle ? styles.headerLight : styles.headerDark, {fontSize: 38, marginBottom: 20}]}>Регистрация</Text>
                     </View>
-                    <View style={{flex: 1.5}}>
+                    <View style={{flex: 1.5, paddingLeft: 60, paddingRight: 60}}>
                         <TextInput
                             style={lightStyle ? styles.lightBorderInput : styles.darkBorderInput}
                             value={name}
@@ -83,7 +83,7 @@ export default function RegisterScreen() {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{flex: Platform.OS === 'android' ? 1 : 0.85}}>
+                    <View style={{flex: Platform.OS === 'android' ? 1 : 0.85, paddingLeft: 60, paddingRight: 60}}>
                         <View style={styles.companyLineView}>
                             <View style={[styles.horizontalLine, {marginTop: 60}]}></View>
                             <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, lstyles.underText]}>

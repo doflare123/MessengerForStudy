@@ -38,11 +38,11 @@ export default function LoginScreen({ navigation }) {
             <TouchableWithoutFeedback
                 onPress={Keyboard.dismiss} // скрытие клавиатуры при нажатии вне TextInput
             >
-                <SafeAreaView style={[lightStyle ? styles.lightBg : styles.darkBg, {paddingLeft: 60, paddingRight: 60}]}>
+                <SafeAreaView style={[lightStyle ? styles.lightBg : styles.darkBg]}>
                     <View style={styles.headerView}>
                         <Text style={lightStyle ? styles.headerLight : styles.headerDark}>Вход</Text>
                     </View>
-                    <View style={{flex: 1.5}}>
+                    <View style={{flex: 1.5, paddingLeft: 60, paddingRight: 60}}>
                         <TextInput
                             style={lightStyle ? styles.lightBorderInput : styles.darkBorderInput}
                             value={email}
@@ -71,7 +71,7 @@ export default function LoginScreen({ navigation }) {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1, paddingLeft: 60, paddingRight: 60}}>
                         <View style={styles.companyLineView}>
                             <View style={[styles.horizontalLine, {marginTop: 60}]}></View>
                             <TouchableOpacity onPress={toRegisterScreen}>
