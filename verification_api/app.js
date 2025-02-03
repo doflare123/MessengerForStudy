@@ -38,7 +38,7 @@ async function sendEmailWithCode(recipientEmail, code) {
     };
     
     const info = await transporter.sendMail(mailOptions);
-    console.log('Письмо успешно отправлено: ' + info.response);
+    console.log('Письмо успешно отправлено');
   } catch (error) {
     console.error('Ошибка отправки письма: ', error);
   }
