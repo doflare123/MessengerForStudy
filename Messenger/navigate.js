@@ -4,6 +4,7 @@ import { createStackNavigator} from '@react-navigation/stack';
 import LoginMenu from './app/(tabs)/Screens/LoginMenu';
 import RegisterMenu from './app/(tabs)/Screens/RegisterMenu';
 import CodeVerify from './app/(tabs)/Screens/CodeVerify';
+import Dialogs from './app/(tabs)/Screens/DialogsMenu';
 // import { WebSocketProvider } from './WebSoket/WSConnection';
 
 
@@ -25,6 +26,11 @@ export default function Navigator() {
             <Stack.Screen
                 name="Verify"
                 component={CodeVerify}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Dialogs"
+                component={Dialogs}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

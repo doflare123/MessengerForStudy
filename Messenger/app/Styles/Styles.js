@@ -9,6 +9,10 @@ export default StyleSheet.create({
         fontFamily: "Montserrat",
         color: "#F5F8FF",
     },
+    lightName: {
+        fontFamily: "Montserrat",
+        color: "#000000",
+    },
     lightTextBg: {
         fontFamily: "Montserrat",
         color: "#214D87",
@@ -18,6 +22,20 @@ export default StyleSheet.create({
         flex: 1,
         backgroundColor: "#F4F5F5",
     },
+    lightInput: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#DFDFDF',
+        backgroundColor: "#DFDFDF",
+        borderRadius: 20,
+        width: '80%',
+        height: 40,
+        paddingHorizontal: 5,
+        placeholderTextColor: "#000000",
+    },
+
+
     darkBtn: {
         backgroundColor: '#F5F8FF',
 
@@ -66,4 +84,47 @@ export default StyleSheet.create({
         width: '100%', // Ширина линии (можно указать процентами или конкретным числом)
         marginVertical: 10, // Отступы сверху и снизу (опционально)
     },
+
+
+    
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        justifyContent: 'space-between',
+    },
+    scrollContainer: {
+        paddingBottom: 20, // Добавляем немного отступа снизу для удобства
+    },
+    modalText: {
+        fontSize: 16,
+        color: 'black',
+    },
+    closeButton: {
+        marginTop: 20,
+        paddingVertical: 10,
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    closeButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+
+
+
+
+    avatar: {
+        width: 75,  // Размер картинки
+        height: 75, // Размер картинки
+        borderRadius: 50,  // Круглая форма картинки
+    }
 });

@@ -28,6 +28,10 @@ export default function LoginScreen({ navigation }) {
     const toRegisterScreen = () => {
         navigation.navigate("Registration");
     }
+
+    const toDialogsScreen = () => {
+        navigation.navigate("Dialogs");
+    }
     
     return (
         <KeyboardAvoidingView
@@ -66,7 +70,7 @@ export default function LoginScreen({ navigation }) {
                             <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, {fontSize: 15, marginTop: Platform.OS === 'android' ? -60 : 0, textAlign: 'right'}]}>Забыли пароль?</Text>
                         </TouchableOpacity>
                         <View style={styles.viewEnd}>
-                            <TouchableOpacity style={[lstyles.enterBtn, lightStyle ? styles.lightBtn : styles.darkBtn]}>
+                            <TouchableOpacity style={[lstyles.enterBtn, lightStyle ? styles.lightBtn : styles.darkBtn]} onPress={toDialogsScreen}>
                                 <Text style={[lightStyle ? styles.lightText : styles.darkText, {fontSize: 30}]}>Войти</Text>
                             </TouchableOpacity>
                         </View>

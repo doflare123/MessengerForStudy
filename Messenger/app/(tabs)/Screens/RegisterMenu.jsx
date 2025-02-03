@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { 
     Text, TextInput, TouchableOpacity, StyleSheet, View, KeyboardAvoidingView, 
-    TouchableWithoutFeedback, Keyboard, Platform, Modal
+    TouchableWithoutFeedback, Keyboard, Platform, Modal, ScrollView, Dimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../Styles/Styles.js';
+import strings from '../../../assets/Strings.json'
 
 export default function RegisterScreen() {
     const [password, setPassword] = useState("");
@@ -19,6 +20,8 @@ export default function RegisterScreen() {
     const [modalText, setModalText] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const navigation = useNavigation();
+
+    const screenHeight = Dimensions.get('window').height;
 
     const handleSecureChange = () => {
         setSecure(!isSecure);
@@ -88,9 +91,9 @@ export default function RegisterScreen() {
                             <View style={[styles.horizontalLine, {marginTop: 60}]}></View>
                             <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, lstyles.underText]}>
                                 При создании аккаунта вы соглашаетесь с условиями{' '}
-                                <Text style={[lstyles.link, lstyles.underText]} onPress={() => openModal("Пользовательское соглашение")}>Пользовательского соглашения</Text>{' '}
+                                <Text style={[lstyles.link, lstyles.underText]} onPress={() => openModal(strings.userAgreement)}>Пользовательского соглашения</Text>{' '}
                                 и{' '}
-                                <Text style={[lstyles.link, lstyles.underText]} onPress={() => openModal("Политики конфиденциальности")}>Политики конфиденциальности</Text>.
+                                <Text style={[lstyles.link, lstyles.underText]} onPress={() => openModal(strings.privacyPolicy)}>Политики конфиденциальности</Text>.
                             </Text>
                         </View>
                         <View style={styles.viewEnd}>
@@ -105,11 +108,14 @@ export default function RegisterScreen() {
                         visible={modalVisible}
                         onRequestClose={() => setModalVisible(false)}
                     >
-                        <View style={modalStyles.modalContainer}>
-                            <View style={modalStyles.modalView}>
-                                <Text style={modalStyles.modalText}>{modalText}</Text>
-                                <TouchableOpacity onPress={() => setModalVisible(false)} style={modalStyles.closeButton}>
-                                    <Text style={modalStyles.closeButtonText}>Закрыть</Text>
+                        <View style={styles.modalContainer}>
+                            <View style={[styles.modalView, { height: screenHeight / 2 }]}>
+                                {/* ScrollView для текста */}
+                                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                                    <Text style={styles.modalText}>{modalText}</Text>
+                                </ScrollView>
+                                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                                    <Text style={styles.closeButtonText}>Закрыть</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -135,35 +141,4 @@ const lstyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-});
-
-const modalStyles = StyleSheet.create({
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    },
-    modalView: {
-        width: '80%',
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        alignItems: 'center'
-    },
-    modalText: {
-        fontFamily: "Montserrat",
-        fontSize: 16,
-        marginBottom: 20
-    },
-    closeButton: {
-        backgroundColor: '#3089FF',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5
-    },
-    closeButtonText: {
-        color: 'white',
-        fontSize: 16
-    }
 });

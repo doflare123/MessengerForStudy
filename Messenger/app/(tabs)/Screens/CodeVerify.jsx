@@ -112,11 +112,14 @@ export default function VerifyScreen({ route }) {
                         visible={modalVisible}
                         onRequestClose={() => setModalVisible(false)}
                     >
-                        <View style={modalStyles.modalContainer}>
-                            <View style={modalStyles.modalView}>
-                                <Text style={modalStyles.modalText}>{modalText}</Text>
-                                <TouchableOpacity onPress={() => setModalVisible(false)} style={modalStyles.closeButton}>
-                                    <Text style={modalStyles.closeButtonText}>Закрыть</Text>
+                        <View style={styles.modalContainer}>
+                            <View style={[styles.modalView, { height: screenHeight / 2 }]}>
+                                {/* ScrollView для текста */}
+                                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                                    <Text style={styles.modalText}>{modalText}</Text>
+                                </ScrollView>
+                                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                                    <Text style={styles.closeButtonText}>Закрыть</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -150,35 +153,4 @@ const lstyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-});
-
-const modalStyles = StyleSheet.create({
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    },
-    modalView: {
-        width: '80%',
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        alignItems: 'center'
-    },
-    modalText: {
-        fontFamily: "Montserrat",
-        fontSize: 16,
-        marginBottom: 20
-    },
-    closeButton: {
-        backgroundColor: '#3089FF',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5
-    },
-    closeButtonText: {
-        color: 'white',
-        fontSize: 16
-    }
 });
