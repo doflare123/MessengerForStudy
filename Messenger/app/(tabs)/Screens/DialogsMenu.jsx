@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { 
     Text, TextInput, TouchableOpacity, StyleSheet, View, KeyboardAvoidingView, 
-    TouchableWithoutFeedback, Keyboard, Platform, Modal, Image, ScrollView
+    TouchableWithoutFeedback, Keyboard, Platform, FlatList, Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../Styles/Styles.js';
 import Icon from 'react-native-vector-icons/AntDesign.js';
 import Icon2 from 'react-native-vector-icons/Entypo.js';
+import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
 
-export default function VerifyScreen({ route }) {
+export default function DialogsScreen({ route }) {
     const [lightStyle, setLight] = useState(true);
-    
+    const [messages, setMessages] = useState([]);
+    const navigation = useNavigation();
+
+    const addMessage = (avatarImg, name, lastMsg, lastTime, id) => {
+        const newMessage = { id, avatarImg, name, lastMsg, lastTime };
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
+
+    const toDialog = (id) => {
+        console.log("Открытие диалога с ID:", id);
+        navigation.navigate("Authorization");
+    };
+
+    useEffect(() => {
+        addMessage(require("../../../assets/images/avatar_example.jpg"), "Roma SS", "Hello my friend!", "04:30", 1);
+        addMessage(require("../../../assets/images/avatar_example.jpg"), "Satoru Gojo", "Прибыл Годжо Сатору", "20:31", 2);
+    }, []);
 
     return (
         <KeyboardAvoidingView
@@ -19,43 +37,53 @@ export default function VerifyScreen({ route }) {
             keyboardVerticalOffset={-250}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <SafeAreaView style={[lightStyle ? styles.lightBg : styles.darkBg]}>
+                <SafeAreaView
+                    style={[lightStyle ? styles.lightBg : styles.darkBg, { flex: 1 }]}
+                    edges={Platform.OS === 'ios' ? ['left', 'right', 'bottom'] : undefined}
+                >
                     <View style={{ height: 60 }}>
                         <View style={{ height: 50, flexDirection: 'row' }}>
-                            <Icon2 name={'menu'} size={45} color="#186FE1" style={{marginLeft: 10}}/>
-                            <Text style={[lightStyle ? styles.headerLight : styles.headerDark, {fontSize: 30, marginLeft: 20}]}>Диалоги</Text>
-                            <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'row'}}>
-                                <TextInput style={[lightStyle ? styles.lightInput : styles.darkInput]} placeholder="🔍Поиск" placeholderTextColor="#888" textAlign="left"/>
-                                {/* <Icon name={'search1'} size={24} color="#00000"/> */}
+                            <Icon2 name={'menu'} size={45} color="#186FE1" style={{ marginLeft: 10 }} />
+                            <Text style={[lightStyle ? styles.headerLight : styles.headerDark, { fontSize: 30, marginLeft: 20 }]}>Диалоги</Text>
+                            <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'row' }}>
+                                <TextInput 
+                                    style={[lightStyle ? styles.lightInput : styles.darkInput]} 
+                                    placeholder="🔍Поиск" 
+                                    placeholderTextColor="#888" 
+                                    textAlign="left" 
+                                />
                             </View>
                         </View>
                         <View style={[styles.horizontalLine, { marginTop: 5, backgroundColor: '#186FE1', opacity: 0.6, height: 2 }]}></View>
                     </View>
-                    <View style={{ flex: 1}}>
-                        <ScrollView contentContainerStyle={styles.scrollContainer}>
-                            <View style={{flexDirection: 'row'}}>
-                                <View style={{flex: 1.75, justifyContent: 'flex-start', flexDirection: 'row'}}>
-                                    <Image 
-                                        source={require('../../../assets/images/avatar_example.jpg')}  // Использование require без объекта
-                                        style={styles.avatar}
-                                    />
-                                    <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-                                        <Text style={[lightStyle ? styles.lightName : styles.darkName, {fontSize: 27, marginLeft: 5, marginTop: 1}]}>Крутое имя</Text>
-                                        <Text style={[lightStyle ? styles.lightName : styles.darkName, {fontSize: 17, marginLeft: 5, marginTop: 3, opacity: 0.7}]}>Привет дурак!</Text>
+                    <View style={{ flex: 1 }}>
+                        <FlatList
+                            data={messages}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => toDialog(item.id)}>
+                                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                                        <View style={{ flex: 1.75, justifyContent: 'flex-start', flexDirection: 'row' }}>
+                                            <Image source={item.avatarImg} style={styles.avatar} />
+                                            <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 24, marginLeft: 5 }]}>{item.name}</Text>
+                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 17, marginLeft: 5, marginTop: -5, opacity: 0.7 }]}>{item.lastMsg}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={{ width: 100, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
+                                            <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 13, marginRight: 10, marginTop: 10, opacity: 0.7 }]}>{item.lastTime}</Text>
+                                        </View>
                                     </View>
-                                </View>
-                                <View style={{flex: 0.25, justifyContent: 'flex-start'}}>
-                                    <Text style={[lightStyle ? styles.lightName : styles.darkName, {fontSize: 17, marginRight: 10, marginTop: 10, opacity: 0.7}]}>20:31</Text>
-                                </View>
-                            </View>
-                        </ScrollView>
-                        
+                                </TouchableOpacity>
+                            )}
+                        />
                     </View>
                 </SafeAreaView>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );
 }
+
 
 const lstyles = StyleSheet.create({
     underText: {
