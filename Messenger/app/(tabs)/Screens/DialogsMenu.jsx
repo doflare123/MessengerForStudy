@@ -15,6 +15,8 @@ export default function DialogsScreen({ route }) {
     const [messages, setMessages] = useState([]);
     const navigation = useNavigation();
 
+    const imageAva = route.params.avatar;
+
     const addMessage = (avatarImg, name, lastMsg, lastTime, id) => {
         const newMessage = { id, avatarImg, name, lastMsg, lastTime };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -26,8 +28,8 @@ export default function DialogsScreen({ route }) {
     };
 
     useEffect(() => {
-        addMessage(require("../../../assets/images/avatar_example.jpg"), "Roma SS", "Hello my friend!", "04:30", 1);
-        addMessage(require("../../../assets/images/avatar_example.jpg"), "Satoru Gojo", "Прибыл Годжо Сатору", "20:31", 2);
+        addMessage(imageAva, "Roma SS", "Hello my friend!", "04:30", 1);
+        addMessage(imageAva, "Satoru Gojo", "Прибыл Годжо Сатору", "20:31", 2);
     }, []);
 
     return (
@@ -64,10 +66,10 @@ export default function DialogsScreen({ route }) {
                                 <TouchableOpacity onPress={() => toDialog(item.id)}>
                                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                                         <View style={{ flex: 1.75, justifyContent: 'flex-start', flexDirection: 'row' }}>
-                                            <Image source={item.avatarImg} style={styles.avatar} />
+                                            <Image source={{ uri: 'data:image/jpeg;base64,' + item.avatarImg }} style={styles.avatar} />
                                             <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 24, marginLeft: 5 }]}>{item.name}</Text>
-                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 17, marginLeft: 5, marginTop: -5, opacity: 0.7 }]}>{item.lastMsg}</Text>
+                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 20, marginLeft: 5 }]}>{item.name}</Text>
+                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 14, marginLeft: 5, opacity: 0.7 }]}>{item.lastMsg}</Text>
                                             </View>
                                         </View>
                                         <View style={{ width: 100, justifyContent: 'flex-start', alignItems: 'flex-end' }}>

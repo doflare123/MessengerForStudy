@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather.js';
 //import { useWebSocket } from '@/WebSoket/WSConnection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import * as ImagePicker from 'expo-image-picker';
 import styles from '../../Styles/Styles.js';
 
 export default function LoginScreen({ navigation }) {
@@ -12,6 +12,32 @@ export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState("");
     const [isSecure, setSecure] = useState(true);
     const [lightStyle, setLight] = useState(true);
+
+    const [image, setImage] = useState(null);
+
+    const pickImage = async () => {
+        // Request permission to access the media library
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissionResult.granted) {
+            Alert.alert('Permission required', 'You need to grant permission to access the media library.');
+            return;
+        }
+    
+        // Launch the image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            base64: true, // Request base64-encoded string
+            quality: 1,
+        });
+    
+        if (!result.canceled) {
+            // Access the base64-encoded string
+            const base64String = result.assets[0].base64;
+            setImage(base64String);
+            // You can now use the base64String as needed
+        }
+    };
 
     const handleEmailChange = (text) => {
         setEmail(text);
@@ -30,7 +56,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     const toDialogsScreen = () => {
-        navigation.navigate("Dialogs");
+        navigation.navigate("Dialogs", {avatar: image});
     }
     
     return (
@@ -78,7 +104,7 @@ export default function LoginScreen({ navigation }) {
                     <View style={{flex: 1, paddingLeft: 60, paddingRight: 60}}>
                         <View style={styles.companyLineView}>
                             <View style={[styles.horizontalLine, {marginTop: 60}]}></View>
-                            <TouchableOpacity onPress={toRegisterScreen}>
+                            <TouchableOpacity onPress={pickImage}>
                                 <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, {fontSize: 18}]}>Зарегистрироваться</Text>
                             </TouchableOpacity>
                         </View>
