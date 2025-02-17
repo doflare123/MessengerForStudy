@@ -3,12 +3,14 @@ const dotenv = require('dotenv');
 dotenv.config({ path: "./.env" });
 const User = require('./models/users');
 const Contact = require('./models/contacts');
-const { generateSalt, hashPassword, validatePassword } = require('./security/crypt');
-const {CreateJWT} = require('./security/Create_jwt');
-const connect = require('./database');
+const { generateSalt, hashPassword, validatePassword } = require('./utils/crypt');
+const {CreateJWT} = require('./utils/Create_jwt');
+const connect = require('./configs/database');
 const { execSync } = require('child_process');
-const { validEmail } = require('./ValidData/validemail');
-const { RefreshAccessToken } = require('./security/Refresh_jwt');
+const { validEmail } = require('./requests/validemail');
+const { RefreshAccessToken } = require('./utils/Refresh_jwt');
+const authRoutes = require('./routes/authRoutes');
+const registerRoutes = require('./routes/registerRoutes')
 
 
 const app = express();
@@ -16,44 +18,10 @@ const PORT = 8081;
 app.use(express.json());
 
 // Регистрация
-app.post('/api/EnterAccount', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({
-            where: { email: email },
-        });
-
-        if (!user) {
-            return res.status(401).json({ message: "неправильный логин или пароль" });
-        }
-
-        if (validatePassword(password, user.password_hash, user.salt)) {
-            const jwt = CreateJWT(user.id, user.username, user.email);
-            return res.status(200).json({
-                jwt: jwt
-            });
-        } else {
-            return res.status(401).json({ message: "неправильный логин или пароль" });
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Ошибка сервера" });
-    }
-});
+app.use('/api/auth', authRoutes);
 
 //это особенный запрос, поэтому здесь придется тебе подругому передвать параметр, примерно так /api/CreateSession?email=example@example.com
-app.get('/api/ValidEmail', async (req, res) => {
-    try {
-        const emailIsValid = await validEmail(req.query.email);
-        if (!emailIsValid)
-            return res.status(409).json({ message: "Email уже зарегистрирован" });
-
-        res.status(200).json({message: "Email валиден"});
-    } catch (error) {
-        console.warn(error);
-        res.status(500).json({ message: "Сервер не смог обработать данные или запрос" });
-    }
-})
+app.use('/api/register', registerRoutes)
 
 app.post('/api/RegisterAccount', async (req, res) => {
     const {name, email, password} = req.body;
