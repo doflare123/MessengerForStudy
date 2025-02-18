@@ -8,6 +8,8 @@ const messeges = new mongoose.Schema({
     tine: String,
     status: Boolean
 });
+
+messeges.index({ sender_id: 1, receiver_id: 1, time: -1 });
 const messege = mongoose.model('messeges', messeges);
 
 module.exports = messege;
