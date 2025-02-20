@@ -25,6 +25,10 @@ const User = connection.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    avatar:{
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 }, {
     tableName: 'users',
     timestamps: true,
