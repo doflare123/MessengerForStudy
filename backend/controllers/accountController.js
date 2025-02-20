@@ -1,7 +1,7 @@
 const User = require('../models/users');
-const { generateSalt, hashPassword} = require('./utils/crypt');
-const { validEmail } = require('./requests/validemail');
-const { RefreshAccessToken } = require('./utils/Refresh_jwt');
+const { generateSalt, hashPassword} = require('../utils/crypt');
+const { validEmail } = require('../requests/validemail');
+const { RefreshAccessToken } = require('../utils/Refresh_jwt');
 const dotenv = require('dotenv');
 dotenv.config({ path: "./.env" });
 

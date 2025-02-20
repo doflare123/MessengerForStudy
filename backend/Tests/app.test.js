@@ -1,12 +1,12 @@
 const request = require('supertest');
 const app = require('../app'); // Путь к вашему серверу
 const User = require('../models/users');
-const { validatePassword } = require('../security/crypt');
-const CreateJWT = require('../security/Create_jwt');
+const { validatePassword } = require('../utils/crypt');
+const CreateJWT = require('../utils/Create_jwt');
 
 jest.mock('../models/users'); // Мокаем модель User
-jest.mock('../security/crypt'); // Мокаем функции для работы с паролями
-jest.mock('../security/Create_jwt'); // Мокаем функцию для создания JWT
+jest.mock('../utils/crypt'); // Мокаем функции для работы с паролями
+jest.mock('../utils/Create_jwt'); // Мокаем функцию для создания JWT
 
 describe('POST /api/EnterAccount', () => {
     it('успешная аутентификация', async () => {

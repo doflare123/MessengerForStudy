@@ -2,10 +2,14 @@ const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 dotenv.config({ path: "./.env" });
 
-const connection = new Sequelize(process.env.BD_post_namebd, process.env.BD_post_username, process.env.BD_post_pswd , {
-    logging: false,
-    host: process.env.BD_post_adress,
-    dialect: 'postgres'
+const connection = new Sequelize(process.env.BD_post_uri, {
+  dialect: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: true, // Для использования SSL
+      rejectUnauthorized: false, // Если ты уверен в безопасности
+    },
+  },
 });
 
 module.exports = connection;

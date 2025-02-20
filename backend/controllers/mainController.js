@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: "./.env" });
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
-const WebSocketServer = require('../websocket');
+// const WebSocketServer = require('../websocket');
 
 exports.GetDialods = async (req, res) =>{
     const token = req.headers.authorization?.split(' ')[1];
@@ -176,16 +176,16 @@ exports.SentMessege = async (req, res) => {
 
         await newMessage.save();
 
-        const socket = WebSocketServer.getSocketByUserId(contact.id);
-        if (socket) {
-            socket.emit('new_message', {
-                sender_id: sender.id,
-                receiver_id: contact.id,
-                message_content: messageContent,
-                data: newMessage.data,
-                status: newMessage.status
-            });
-        }
+        // const socket = WebSocketServer.getSocketByUserId(contact.id);
+        // if (socket) {
+        //     socket.emit('new_message', {
+        //         sender_id: sender.id,
+        //         receiver_id: contact.id,
+        //         message_content: messageContent,
+        //         data: newMessage.data,
+        //         status: newMessage.status
+        //     });
+        // }
 
         res.status(200).json({ message: 'Сообщение успешно отправлено' });
 
