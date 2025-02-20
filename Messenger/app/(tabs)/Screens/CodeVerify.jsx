@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
     Text, TextInput, TouchableOpacity, StyleSheet, View, KeyboardAvoidingView, 
-    TouchableWithoutFeedback, Keyboard, Platform, Modal
+    TouchableWithoutFeedback, Keyboard, Platform, Modal, Dimensions, ScrollView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../Styles/Styles.js';
@@ -14,6 +14,8 @@ export default function VerifyScreen({ route }) {
     const [canResend, setCanResend] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalText, setModalText] = useState("");
+
+    const screenHeight = Dimensions.get('window').height;
 
     const { email } = route.params || {};
 
@@ -74,10 +76,10 @@ export default function VerifyScreen({ route }) {
                         <View style={{ marginTop: 5 }}>
                             {canResend ? (
                                 <TouchableOpacity onPress={handleResend}>
-                                    <Text style={lstyles.resendTextActive}>Отправить повторно</Text>
+                                    <Text style={styles.lightResendActive}>Отправить повторно</Text>
                                 </TouchableOpacity>
                             ) : (
-                                <Text style={lstyles.resendText}>Запросить повторно через {timer} секунд</Text>
+                                <Text style={styles.lightResend}>Запросить повторно через {timer} секунд</Text>
                             )}
                         </View>
                         <View style={[styles.viewEnd, {marginTop: Platform.OS === 'ios' ? 200 : 0}]}>                            
@@ -137,15 +139,6 @@ const lstyles = StyleSheet.create({
     link: {
         color: '#3089FF',
         textDecorationLine: 'underline',
-    },
-    resendText: {
-        fontSize: 14,
-        color: 'gray'
-    },
-    resendTextActive: {
-        fontSize: 14,
-        color: '#3089FF',
-        textDecorationLine: 'underline'
     },
     sendBtn: {
         width: 275,

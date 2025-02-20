@@ -4,6 +4,8 @@ export default StyleSheet.create({
     lightBtn: {
         borderRadius: 30,
         backgroundColor: "#186FE1",
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     lightText: {
         fontFamily: "Montserrat",
@@ -17,6 +19,10 @@ export default StyleSheet.create({
         fontFamily: "Montserrat",
         color: "#214D87",
         opacity: 0.6,
+    },
+    lightTextBg2: {
+        fontFamily: "Montserrat",
+        color: "#186FE1",
     },
     lightBg: {
         flex: 1,
@@ -33,6 +39,11 @@ export default StyleSheet.create({
         height: 40,
         paddingHorizontal: 5,
         placeholderTextColor: "#000000",
+        paddingLeft: 10
+    },
+    lightDelete: {
+        fontFamily: "Montserrat",
+        color: "#D70000",
     },
 
 
@@ -119,6 +130,16 @@ export default StyleSheet.create({
         fontSize: 16,
     },
 
+
+    lightResend: {
+        fontSize: 14,
+        color: 'gray'
+    },
+    lightResendActive: {
+        fontSize: 14,
+        color: '#3089FF',
+        textDecorationLine: 'underline'
+    },
 
 
 

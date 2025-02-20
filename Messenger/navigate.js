@@ -5,6 +5,7 @@ import LoginMenu from './app/(tabs)/Screens/LoginMenu';
 import RegisterMenu from './app/(tabs)/Screens/RegisterMenu';
 import CodeVerify from './app/(tabs)/Screens/CodeVerify';
 import Dialogs from './app/(tabs)/Screens/DialogsMenu';
+import Profile from './app/(tabs)/Screens/ProfileMenu';
 // import { WebSocketProvider } from './WebSoket/WSConnection';
 
 
@@ -31,6 +32,11 @@ export default function Navigator() {
             <Stack.Screen
                 name="Dialogs"
                 component={Dialogs}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Profile"
+                component={Profile}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

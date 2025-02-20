@@ -20,6 +20,11 @@ export default function DialogsScreen({ route }) {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
+    const toProfile = (id) => {
+        navigation.navigate("Profile");
+    };
+
+
     const toDialog = (id) => {
         console.log("Открытие диалога с ID:", id);
         navigation.navigate("Authorization");
@@ -43,7 +48,7 @@ export default function DialogsScreen({ route }) {
                 >
                     <View style={{ height: 60 }}>
                         <View style={{ height: 50, flexDirection: 'row' }}>
-                            <Icon2 name={'menu'} size={45} color="#186FE1" style={{ marginLeft: 10 }} />
+                            <Icon2 name={'menu'} size={45} color="#186FE1" style={{ marginLeft: 10 }} onPress={toProfile} />
                             <Text style={[lightStyle ? styles.headerLight : styles.headerDark, { fontSize: 30, marginLeft: 20 }]}>Диалоги</Text>
                             <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'row' }}>
                                 <TextInput 
@@ -66,8 +71,8 @@ export default function DialogsScreen({ route }) {
                                         <View style={{ flex: 1.75, justifyContent: 'flex-start', flexDirection: 'row' }}>
                                             <Image source={item.avatarImg} style={styles.avatar} />
                                             <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 24, marginLeft: 5 }]}>{item.name}</Text>
-                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 17, marginLeft: 5, marginTop: -5, opacity: 0.7 }]}>{item.lastMsg}</Text>
+                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 20, marginLeft: 5 }]}>{item.name}</Text>
+                                                <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 14, marginLeft: 5, opacity: 0.7 }]}>{item.lastMsg}</Text>
                                             </View>
                                         </View>
                                         <View style={{ width: 100, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
