@@ -1,6 +1,6 @@
 FROM node:16
 WORKDIR /app
-RUN useradd app
+RUN useradd -m app
 
 COPY verification_api/package*.json ./
 RUN npm install

@@ -10,6 +10,7 @@ const connection = new Sequelize(process.env.BD_post_uri, {
       rejectUnauthorized: false, // Если ты уверен в безопасности
     },
   },
+  logging: false,
 });
 
 module.exports = connection;

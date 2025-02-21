@@ -34,9 +34,11 @@ const Contact = connection.define('Contact', {
     timestamps: false,
   });
 
-User.hasMany(Contact, { foreignKey: 'user_id' });
-User.hasMany(Contact, { foreignKey: 'contact_id' });
-Contact.belongsTo(User, { foreignKey: 'user_id' });
-Contact.belongsTo(User, { foreignKey: 'contact_id' });
+User.hasMany(Contact, { foreignKey: 'user_id', as: 'Contacts' });
+User.hasMany(Contact, { foreignKey: 'contact_id', as: 'ContactsAsContact' });
+
+Contact.belongsTo(User, { foreignKey: 'user_id', as: 'User' });
+Contact.belongsTo(User, { foreignKey: 'contact_id', as: 'ContactUser' });
+
 
 module.exports = Contact;
