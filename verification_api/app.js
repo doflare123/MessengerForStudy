@@ -8,7 +8,7 @@ const connection = require('./database');
 const { execSync } = require('child_process'); // Для синхронного выполнения команд
 
 const app = express();
-const PORT = 8080;
+const PORT = 8082;
 app.use(express.json());
 
 // Функция для генерации случайного кода подтверждения

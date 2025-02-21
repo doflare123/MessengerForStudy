@@ -11,7 +11,7 @@ const mainRoutes = require('./routes/mainRoutes');
 const accountRoutes = require('./routes/accountRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 

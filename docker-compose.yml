@@ -1,0 +1,14 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8081:8081"
+  backendWs:
+    build: ./backendWs
+    ports:
+      - "8080:8080"
+  verification_api:
+    build: ./verification_api
+    ports:
+      - "8082:8082"
