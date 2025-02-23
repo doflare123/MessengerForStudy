@@ -46,13 +46,13 @@ export default function DialogsScreen({ route }) {
                     style={[lightStyle ? styles.lightBg : styles.darkBg, { flex: 1 }]}
                     edges={Platform.OS === 'ios' ? ['left', 'right', 'bottom'] : undefined}
                 >
-                    <View style={{ height: 60 }}>
-                        <View style={{ height: 50, flexDirection: 'row' }}>
+                    <View style={{ height: 80 }}>
+                        <View style={{ height: 60, flexDirection: 'row', alignItems: 'center' }}>
                             <Icon2 name={'menu'} size={45} color="#186FE1" style={{ marginLeft: 10 }} onPress={toProfile} />
                             <Text style={[lightStyle ? styles.headerLight : styles.headerDark, { fontSize: 30, marginLeft: 20 }]}>Диалоги</Text>
                             <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'row' }}>
                                 <TextInput 
-                                    style={[lightStyle ? styles.lightInput : styles.darkInput]} 
+                                    style={[lightStyle ? styles.lightInput : styles.darkInput, {height:"100%"}]} 
                                     placeholder="🔍Поиск" 
                                     placeholderTextColor="#888" 
                                     textAlign="left" 

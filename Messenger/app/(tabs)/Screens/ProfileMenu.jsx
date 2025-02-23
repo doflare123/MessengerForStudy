@@ -62,7 +62,7 @@ export default function DialogsScreen({ route }) {
     };
 
     const toDialogs = () => {
-        navigation.navigate("Dialogs");
+        navigation.goBack();
     };
 
     const exit = () => {
@@ -97,8 +97,10 @@ export default function DialogsScreen({ route }) {
                 >
                     <View style={{ height: 60 }}>
                         <View style={{ height: 50, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }} onPress={toDialogs}>
-                                <Icon2 name={'arrow-left'} size={45} color="#186FE1" style={{ marginLeft: 10 }} />
+                            <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }}>
+                                <TouchableOpacity onPress={toDialogs}>
+                                    <Icon2 name={'arrow-left'} size={45} color="#186FE1" style={{ marginLeft: 10 }} />
+                                </TouchableOpacity>
                             </View>
                             <Text style={[lightStyle ? styles.headerLight : styles.headerDark, { fontSize: 30, marginLeft: 20 }]}>Профиль</Text>
                             <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'row' }}>

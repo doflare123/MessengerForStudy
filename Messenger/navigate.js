@@ -6,6 +6,9 @@ import RegisterMenu from './app/(tabs)/Screens/RegisterMenu';
 import CodeVerify from './app/(tabs)/Screens/CodeVerify';
 import Dialogs from './app/(tabs)/Screens/DialogsMenu';
 import Profile from './app/(tabs)/Screens/ProfileMenu';
+import ForgotEmail from './app/(tabs)/Screens/ForgotEmail';
+import ForgotCode from './app/(tabs)/Screens/ForgotCode';
+import ForgotPswd from './app/(tabs)/Screens/ForgotPswd';
 // import { WebSocketProvider } from './WebSoket/WSConnection';
 
 
@@ -37,6 +40,21 @@ export default function Navigator() {
             <Stack.Screen
                 name="Profile"
                 component={Profile}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ForgotPswd"
+                component={ForgotPswd}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ForgotCode"
+                component={ForgotCode}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ForgotEmail"
+                component={ForgotEmail}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
