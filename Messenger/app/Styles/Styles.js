@@ -142,6 +142,32 @@ export default StyleSheet.create({
     },
 
 
+    lightMsgUserBg: {
+        backgroundColor: '#186FE1'
+    },
+    lightMsgBg: {
+        backgroundColor: '#DFDFDF'
+    },
+    lightMsgUser: {
+        color: 'white'
+    },
+    lightMsg: {
+        color: 'black'
+    },
+    lightMsgInput: {
+        color: 'black'
+    },
+    lightMsgFoot: {
+        borderColor: '#DFDFDF', 
+        backgroundColor: '#F4F5F5'
+    },
+    lightMsgInBg: {
+        backgroundColor: '#DFDFDF'
+    },
+    lightMsgEmoji: {
+        color: '#186FE1'
+    },
+
 
     avatar: {
         width: 75,  // Размер картинки

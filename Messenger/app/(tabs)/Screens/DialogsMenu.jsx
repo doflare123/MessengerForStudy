@@ -25,9 +25,9 @@ export default function DialogsScreen({ route }) {
     };
 
 
-    const toDialog = (id) => {
+    const toDialog = (id, name) => {
         console.log("Открытие диалога с ID:", id);
-        navigation.navigate("Authorization");
+        navigation.navigate("Chat", { id, name });
     };
 
     useEffect(() => {
@@ -66,7 +66,7 @@ export default function DialogsScreen({ route }) {
                             data={messages}
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => toDialog(item.id)}>
+                                <TouchableOpacity onPress={() => toDialog(item.id, item.name)}>
                                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                                         <View style={{ flex: 1.75, justifyContent: 'flex-start', flexDirection: 'row' }}>
                                             <Image source={item.avatarImg} style={styles.avatar} />

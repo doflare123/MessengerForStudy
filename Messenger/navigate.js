@@ -9,6 +9,7 @@ import Profile from './app/(tabs)/Screens/ProfileMenu';
 import ForgotEmail from './app/(tabs)/Screens/ForgotEmail';
 import ForgotCode from './app/(tabs)/Screens/ForgotCode';
 import ForgotPswd from './app/(tabs)/Screens/ForgotPswd';
+import ChatScreen from './app/(tabs)/Screens/ChatScreen';
 // import { WebSocketProvider } from './WebSoket/WSConnection';
 
 
@@ -55,6 +56,11 @@ export default function Navigator() {
             <Stack.Screen
                 name="ForgotEmail"
                 component={ForgotEmail}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Chat"
+                component={ChatScreen}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
