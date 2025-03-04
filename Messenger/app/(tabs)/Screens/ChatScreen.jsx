@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign.js';
 import Icon2 from 'react-native-vector-icons/Entypo.js';
-import EmojiSelector from 'react-native-emoji-selector';
+import EmojiModal from 'react-native-emoji-modal';
 import styles from '../../Styles/Styles.js';
 import { useNavigation } from '@react-navigation/native';
 
@@ -21,6 +21,16 @@ export default function ChatScreen({ route }) {
 
     const navigation = useNavigation();
     const inputRef = useRef(null);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+            setShowEmojiPicker(false); // Закрываем эмодзи при появлении клавиатуры
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+        };
+    }, []);
 
     const sendMessage = () => {
         if (newMessage.trim()) {
@@ -67,7 +77,6 @@ export default function ChatScreen({ route }) {
                                 ref={inputRef}
                                 style={[lightStyle ? styles.lightMsgInput : styles.darkMsgInput, { flex: 1 }]}
                                 placeholder='Напишите сообщение...'
-                                placeholderTextColor='#888'
                                 value={newMessage}
                                 onChangeText={setNewMessage}
                                 keyboardType='default'
@@ -83,12 +92,11 @@ export default function ChatScreen({ route }) {
 
                     {/* Эмодзи-панель */}
                     {showEmojiPicker && (
-                        <View style={{ height: 200 }}>
-                            <EmojiSelector
-                                onEmojiSelected={emoji => setNewMessage(prev => prev + emoji)}
-                                showSearchBar={false}
-                            />
-                        </View>
+                        <EmojiModal
+                            onEmojiSelected={(emoji) => setNewMessage(prev => prev + emoji)}
+                            containerStyle={{ height: 250,alignItems: 'center' }}
+                            modalStyle={{ justifyContent: 'center', alignItems: 'center' }}
+                        />
                     )}
                 </SafeAreaView>
             </TouchableWithoutFeedback>
