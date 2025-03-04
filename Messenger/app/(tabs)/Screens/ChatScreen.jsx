@@ -23,13 +23,6 @@ export default function ChatScreen({ route }) {
     const inputRef = useRef(null);
 
     useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-            setShowEmojiPicker(false); // Закрываем эмодзи при появлении клавиатуры
-        });
-
-        return () => {
-            keyboardDidShowListener.remove();
-        };
     }, []);
 
     const sendMessage = () => {
@@ -89,14 +82,17 @@ export default function ChatScreen({ route }) {
                             <Icon name='arrowup' size={24} style={lightStyle ? styles.lightMsgEmoji : styles.darkMsgEmoji} />
                         </TouchableOpacity>
                     </View>
-
+                    
                     {/* Эмодзи-панель */}
                     {showEmojiPicker && (
-                        <EmojiModal
-                            onEmojiSelected={(emoji) => setNewMessage(prev => prev + emoji)}
-                            containerStyle={{ height: 250,alignItems: 'center' }}
-                            modalStyle={{ justifyContent: 'center', alignItems: 'center' }}
-                        />
+                        <View style={{height: 200}}>
+                            <EmojiModal
+                                onEmojiSelected={(emoji) => setNewMessage(prev => prev + emoji)}
+                                containerStyle={[lightStyle ? styles.lightMsgEmojiBg : styles.darkMsgEmojiBg, { height: '100%',alignItems: 'center', borderRadius: 0 }]}
+                                modalStyle={{ justifyContent: 'center', alignItems: 'center', marginBottom: -60 }}
+                            />
+                        </View>
+                        
                     )}
                 </SafeAreaView>
             </TouchableWithoutFeedback>

@@ -167,6 +167,9 @@ export default StyleSheet.create({
     lightMsgEmoji: {
         color: '#186FE1'
     },
+    lightMsgEmojiBg: {
+        backgroundColor: "#D8D8D8",
+    },
 
 
     avatar: {
