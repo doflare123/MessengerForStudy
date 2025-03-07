@@ -44,8 +44,13 @@ async function sendEmailWithCode(recipientEmail, code) {
   }
 }
 //это особенный запрос, поэтому здесь придется тебе подругому передвать параметр, примерно так /api/CreateSession?email=example@example.com
-app.get('/api/CreateSession', async (req, res) => {
+app.post('/api/CreateSession', async (req, res) => {
   try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email обязателен" });
+    }
+    
     const sessionId = generateSessionId();
     const confimCode = generateCode();
 
@@ -54,7 +59,7 @@ app.get('/api/CreateSession', async (req, res) => {
       CodeConfirm: confimCode,
     });
 
-    await sendEmailWithCode(req.query.email, confimCode);
+    await sendEmailWithCode(email, confimCode);
 
     res.status(200).json({
       sessionId: sessionId,
@@ -65,6 +70,7 @@ app.get('/api/CreateSession', async (req, res) => {
     });
   }
 });
+
 
 app.post('/api/CheckSession', async (req, res) => {
   const { sessionId, code } = req.body;

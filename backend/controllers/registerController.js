@@ -1,19 +1,24 @@
 const {validEmail} = require('../requests/validemail')
 
 
-//это особенный запрос, поэтому здесь придется тебе подругому передвать параметр, примерно так /api/register/validEmail?email=example@example.com
-exports.Validation = async (req, res) =>{
+exports.Validation = async (req, res) => {
     try {
-        const emailIsValid = await validEmail(req.query.email);
-        if (!emailIsValid)
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ message: "Email обязателен" });
+        }
+        
+        const emailIsValid = await validEmail(email);
+        if (!emailIsValid) {
             return res.status(409).json({ message: "Email уже зарегистрирован" });
+        }
 
-        res.status(200).json({message: "Email валиден"});
+        res.status(200).json({ message: "Email валиден" });
     } catch (error) {
         console.warn(error);
         res.status(500).json({ message: "Сервер не смог обработать данные или запрос" });
     }
-}
+};
 
 exports.Register = async (req, res) =>{
     const {name, email, password} = req.body;

@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон -->
+  <rect width="200" height="200" rx="30" fill="#0088CC"/>
+  
+  <!-- Буква V -->
+  <path d="M50 130 L100 50 L150 130" stroke="white" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Самолетик -->
+  <path d="M80 110 L150 70 L100 150 Z" fill="white" stroke="white" stroke-width="5" stroke-linejoin="round"/>
+</svg>
