@@ -6,7 +6,7 @@
 
 <!-- Самолетик -->
 
-<img title="" src="file:///C:/Users/ABOBUS/Documents/Study/mob/MessengerForStudy/ТЗ/IconApp.svg" alt="Vkgramm Logo" data-align="center">
+<img title="" src="ТЗ/IconApp.svg" alt="Vkgramm Logo" data-align="center">
 
 ## 📌 Описание
 
@@ -72,9 +72,9 @@ Vkgramm/
 
 ## 📸 Скриншоты
 
-<img title="" src="file:///C:/Users/ABOBUS/Documents/Study/mob/MessengerForStudy/ТЗ/1.jpg" alt="Главный экран" data-align="center" width="168">
+<img title="" src="ТЗ/1.jpg" alt="Главный экран" data-align="center" width="168">
 
-<img title="" src="file:///C:/Users/ABOBUS/Documents/Study/mob/MessengerForStudy/ТЗ/3.jpg" alt="3.jpg" width="172" data-align="center">
+<img title="" src="ТЗ/3.jpg" alt="3.jpg" width="172" data-align="center">
 
 ## 🏗️ Разработчики
 
@@ -82,7 +82,7 @@ Vkgramm/
   
   
   
-  <img title="" src="file:///C:/Users/ABOBUS/Documents/Study/mob/MessengerForStudy/ТЗ/logo.png" alt="logo.png" width="335" data-align="center">
+  <img title="" src="ТЗ/logo.png" alt="logo.png" width="335" data-align="center">
 
 ## 📬 Контакты
 
