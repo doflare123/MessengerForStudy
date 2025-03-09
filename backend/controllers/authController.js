@@ -14,7 +14,6 @@ exports.login = async (req, res) =>{
         }
 
         if (validatePassword(password, user.password_hash, user.salt)) {
-            console.log(password, user.username, email)
             const jwt = await CreateJWT(user.username, email);
             return res.status(200).json({
                 accessToken: jwt.accessToken,

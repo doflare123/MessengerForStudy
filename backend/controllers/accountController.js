@@ -3,7 +3,9 @@ const { generateSalt, hashPassword} = require('../utils/crypt');
 const { validEmail } = require('../requests/validemail');
 const { RefreshAccessToken } = require('../utils/Refresh_jwt');
 const dotenv = require('dotenv');
+const messege = require('../models/messages');
 dotenv.config({ path: "./.env" });
+const jwt = require('jsonwebtoken');
 
 exports.ChangeAvatar = async (req, res) => {
     const { avatar } = req.body;
@@ -16,17 +18,20 @@ exports.ChangeAvatar = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
         const userEmail = decoded.email;
-
-        const [updatedRows] = await User.update(
-            { avatar: avatar },
-            { where: { email: userEmail } }
-        );
-
-        if (updatedRows === 0) {
-            return res.status(404).json({ message: 'Пользователь не найден' });
+        try {
+            const [updatedRows] = await User.update(
+                { avatar: avatar },
+                { where: { email: userEmail } }
+            );
+    
+            if (updatedRows === 0) {
+                return res.status(404).json({ message: 'Пользователь не найден' });
+            }
+    
+            res.status(200).json({ message: 'Аватар обновлён'});
+        } catch (error) {
+            res.status(404).json({messege: "Не найден юзер"})
         }
-
-        res.status(200).json({ message: 'Аватар обновлён', avatar });
     } catch (error) {
         res.status(403).json({ message: 'Неверный или истекший токен' });
     }
@@ -54,7 +59,7 @@ exports.ChangeUserName = async (req, res) =>{
             return res.status(404).json({ message: 'Пользователь не найден' });
         }
 
-        res.status(200).json({ message: 'Аватар обновлён', avatar });
+        res.status(200).json({ message: 'Имя пользователя изменено'});
     } catch (error) {
         res.status(403).json({ message: 'Неверный или истекший токен' });
     }
@@ -65,7 +70,7 @@ exports.PswdChng = async (req, res) => {
 
     try {
         const emailIsValid = await validEmail(email);
-        if (!emailIsValid)
+        if (emailIsValid)
             return res.status(404).json({ message: "Такого email не существует" });
 
         const salt = generateSalt();
