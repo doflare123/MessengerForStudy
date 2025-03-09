@@ -20,6 +20,12 @@ app.use('/api/register', registerRoutes);
 app.use('/api/main', mainRoutes);
 app.use('/api/account', accountRoutes);
 
+app.use((req, res, next) => {
+  console.log(`📩 Пришел запрос: ${req.method} ${req.originalUrl}`);
+  next(); // Передаем управление следующему middleware
+});
+
+
 // Подключение к MongoDB
 mongoose.connect(process.env.BD_MONGO_URI)
   .then(() => {

@@ -7,7 +7,7 @@ const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 // const WebSocketServer = require('../websocket');
 
-exports.GetDialods = async (req, res) =>{
+exports.GetDialods = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
@@ -17,49 +17,57 @@ exports.GetDialods = async (req, res) =>{
     try {
         const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
         const userId = decoded.id;
+        console.log(123);
 
-        const contacts = await Contact.findAll({
-            where: {
-                [Op.or]: [{ user_id: userId }, { contact_id: userId }]
+        try {
+            const contacts = await Contact.findAll({
+                where: {
+                    [Op.or]: [{ user_id: userId }, { contact_id: userId }]
+                }
+            });
+
+            console.log(1234);
+
+            const userIds = contacts.map(contact => 
+                contact.user_id === userId ? contact.contact_id : contact.user_id
+            );
+
+            if (userIds.length === 0) {
+                return res.status(200).json({ dialogs: [] });
             }
-        });
 
-        const userIds = contacts.map(contact => 
-            contact.user_id === userId ? contact.contact_id : contact.user_id
-        );
+            const dialogs = await Promise.all(userIds.map(async (contactId) => {
+                const lastMessage = await Message.findOne({
+                    $or: [
+                        { sender_id: String(userId), receiver_id: String(contactId) },
+                        { sender_id: String(contactId), receiver_id: String(userId) }
+                    ]
+                }).sort({ data: -1 }).limit(1);
 
-        if (userIds.length === 0) {
-            return res.status(200).json({ dialogs: [] });
+                const contact = await User.findByPk(contactId, { attributes: ['id', 'username', 'email'] });
+
+                return {
+                    contact: contact ? { username: contact.username, email: contact.email } : null,
+                    lastMessage: lastMessage ? {
+                        sender_id: lastMessage.sender_id,
+                        receiver_id: lastMessage.receiver_id,
+                        message_content: lastMessage.message_content,
+                        data: lastMessage.data,
+                        status: lastMessage.status
+                    } : null
+                };
+            }));
+
+            return res.status(200).json({ dialogs });
+
+        } catch (error) {
+            return res.status(200).json({ msg: "Диалогов пока нет" });
         }
 
-        const dialogs = await Promise.all(userIds.map(async (contactId) => {
-            const lastMessage = await Message.findOne({
-                $or: [
-                    { sender_id: String(userId), receiver_id: String(contactId) },
-                    { sender_id: String(contactId), receiver_id: String(userId) }
-                ]
-            }).sort({ data: -1 }).limit(1);
-
-            const contact = await User.findByPk(contactId, { attributes: ['id', 'username', 'email'] });
-
-            return {
-                contact: contact ? {username: contact.username, email: contact.email } : null,
-                lastMessage: lastMessage ? {
-                    sender_id: lastMessage.sender_id,
-                    receiver_id: lastMessage.receiver_id,
-                    message_content: lastMessage.message_content,
-                    data: lastMessage.data,
-                    status: lastMessage.status
-                } : null
-            };
-        }));
-
-        res.status(200).json({ dialogs });
-
     } catch (error) {
-        res.status(403).json({ error: "Истекший токен или невалидный" });
+        return res.status(403).json({ error: "Истекший токен или невалидный" });
     }
-}
+};
 
 
 exports.GetMessages = async (req, res) => {

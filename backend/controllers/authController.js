@@ -14,9 +14,11 @@ exports.login = async (req, res) =>{
         }
 
         if (validatePassword(password, user.password_hash, user.salt)) {
-            const jwt = CreateJWT(user.username, user.email);
+            console.log(password, user.username, email)
+            const jwt = await CreateJWT(user.username, email);
             return res.status(200).json({
-                jwt: jwt
+                accessToken: jwt.accessToken,
+                refreshToken: jwt.refreshToken
             });
         } else {
             return res.status(401).json({ message: "неправильный логин или пароль" });

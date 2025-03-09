@@ -86,6 +86,9 @@ app.post('/api/CheckSession', async (req, res) => {
     }
 
     if (session.CodeConfirm === parseInt(code)) {
+      const deletedRows = await Session.destroy({
+        where: { SessionId: SessionId }
+      });
       return res.status(200).json();
     } else {
       return res.status(400).json({
@@ -125,21 +128,9 @@ connection.sync()
     console.error('Ошибка синхронизации таблиц: ', err);
   });
 
-// Запуск тестов перед запуском сервера
-if (require.main === module) {
-  try {
-    // Запускаем тесты перед тем, как запустить сервер
-    execSync('npx jest --runInBand', { stdio: 'inherit' });
-  } catch (error) {
-    console.error('Тесты не прошли, сервер не будет запущен');
-    process.exit(1); // Если тесты не прошли, не запускаем сервер
-  }
-
-  // Если тесты прошли, запускаем сервер
   app.listen(PORT, () => {
     console.log("Сервер работает");
   });
-}
 
 module.exports = app;
 

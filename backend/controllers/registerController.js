@@ -1,4 +1,7 @@
-const {validEmail} = require('../requests/validemail')
+const {validEmail} = require('../requests/validemail');
+const {generateSalt, hashPassword} = require('../utils/crypt');
+const User = require('../models/users');
+
 
 
 exports.Validation = async (req, res) => {
