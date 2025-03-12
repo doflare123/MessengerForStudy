@@ -17,7 +17,6 @@ exports.GetDialods = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
         const userId = decoded.id;
-        console.log(123);
 
         try {
             const contacts = await Contact.findAll({
@@ -25,8 +24,6 @@ exports.GetDialods = async (req, res) => {
                     [Op.or]: [{ user_id: userId }, { contact_id: userId }]
                 }
             });
-
-            console.log(1234);
 
             const userIds = contacts.map(contact => 
                 contact.user_id === userId ? contact.contact_id : contact.user_id

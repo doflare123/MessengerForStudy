@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const connection = require('../database');
 
 
-const SessionRegister = connection.define('Sessions', {
+const SessionPass = connection.define('SessionsPass',{
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true, 
@@ -23,8 +23,8 @@ const SessionRegister = connection.define('Sessions', {
       defaultValue: () => new Date(Date.now() + 10 * 60 * 1000),
     },
 }, {
-    tableName: 'sessions',
+    tableName: 'SessionsPass',
     timestamps: false,
   });
 
-module.exports = SessionRegister;
+module.exports = SessionPass;

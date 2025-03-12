@@ -3,9 +3,12 @@ const crypto = require('crypto');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config({ path: "./.env" });
-const Session = require('./models/session_model');
+const SessionRegister = require('./models/session_model');
 const connection = require('./database');
 const { execSync } = require('child_process'); // Для синхронного выполнения команд
+const { default: axios } = require('axios');
+const SessionPass = require('./models/session_chng_model');
+const SessionCodes = require('./models/session_codes_model');
 
 const app = express();
 const PORT = 8082;
@@ -43,28 +46,61 @@ async function sendEmailWithCode(recipientEmail, code) {
     console.error('Ошибка отправки письма: ', error);
   }
 }
-//это особенный запрос, поэтому здесь придется тебе подругому передвать параметр, примерно так /api/CreateSession?email=example@example.com
+
 app.post('/api/CreateSession', async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, type } = req.body;
     if (!email) {
       return res.status(400).json({ message: "Email обязателен" });
     }
-    
-    const sessionId = generateSessionId();
-    const confimCode = generateCode();
 
-    await Session.create({
+    try {
+      const response = await axios.post(process.env.URL_CHECK_USER, { email });
+
+      if (response.status !== 200) {
+        return res.status(409).json({ message: "Скорее всего, этот email уже используется" });
+      }
+    } catch (error) {
+      console.error("Ошибка при проверке email:", error.response?.data || error.message);
+      return res.status(500).json({ message: "При обработке запроса произошла ошибка" });
+    }
+
+    const sessionId = generateSessionId();
+    const confirmCode = generateCode();
+
+
+    switch (type) {
+      case "reg":
+        await SessionRegister.create({
+          SessionId: sessionId,
+          Validation: false,
+        });
+        break;
+
+      case "chng":
+        await SessionPass.create({
+          SessionId: sessionId,
+          Validation: false,
+        });
+        break;
+
+      default:
+        res.status(400).json({ message: "Неверный тип сессии" });
+    }
+
+    await SessionCodes.create({
       SessionId: sessionId,
-      CodeConfirm: confimCode,
+      CodeConfirm: confirmCode,
+      TypeSession: type === "reg",
     });
 
-    await sendEmailWithCode(email, confimCode);
+    await sendEmailWithCode(email, confirmCode);
 
     res.status(200).json({
       sessionId: sessionId,
     });
   } catch (error) {
+    console.error("Ошибка создания сессии:", error);
     res.status(500).json({
       message: "При создании сессии произошла ошибка",
     });
@@ -72,10 +108,11 @@ app.post('/api/CreateSession', async (req, res) => {
 });
 
 
+
 app.post('/api/CheckSession', async (req, res) => {
   const { sessionId, code } = req.body;
   try {
-    const session = await Session.findOne({
+    const session = await SessionRegister.findOne({
       where: { SessionId: sessionId },
     });
 
@@ -86,7 +123,7 @@ app.post('/api/CheckSession', async (req, res) => {
     }
 
     if (session.CodeConfirm === parseInt(code)) {
-      const deletedRows = await Session.destroy({
+      const deletedRows = await SessionRegister.destroy({
         where: { SessionId: SessionId }
       });
       return res.status(200).json();
@@ -107,7 +144,7 @@ app.post('/api/RefreshCode', async (req, res) => {
   try {
     const newCode = generateCode();
 
-    await Session.create({
+    await SessionRegister.create({
       SessionId: session,
       CodeConfirm: newCode,
     });
