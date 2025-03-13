@@ -26,9 +26,9 @@ exports.Validation = async (req, res) => {
 exports.Register = async (req, res) =>{
     const {name, email, password} = req.body;
     try {
-        const emailIsValid = await validEmail(email);
-        if (!emailIsValid)
-            return res.status(409).json({ message: "Email уже зарегистрирован" });
+        // const emailIsValid = await validEmail(email);
+        // if (!emailIsValid)
+        //     return res.status(409).json({ message: "Email уже зарегистрирован" });
 
         const salt = generateSalt();
         const hashPswd = hashPassword(password, salt);

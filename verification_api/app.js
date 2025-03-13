@@ -9,10 +9,12 @@ const { execSync } = require('child_process'); // Для синхронного 
 const { default: axios } = require('axios');
 const SessionPass = require('./models/session_chng_model');
 const SessionCodes = require('./models/session_codes_model');
+const messege = require('../backend/models/messages');
 
 const app = express();
 const PORT = 8082;
 app.use(express.json());
+
 
 // Функция для генерации случайного кода подтверждения
 function generateCode(length = 6) {
@@ -50,19 +52,21 @@ async function sendEmailWithCode(recipientEmail, code) {
 app.post('/api/CreateSession', async (req, res) => {
   try {
     const { email, type } = req.body;
-    if (!email) {
-      return res.status(400).json({ message: "Email обязателен" });
+    let response;
+    if (!email || !type) {
+      res.status(400).json({ message: "Email обязателен" });
     }
 
     try {
-      const response = await axios.post(process.env.URL_CHECK_USER, { email });
-
-      if (response.status !== 200) {
-        return res.status(409).json({ message: "Скорее всего, этот email уже используется" });
-      }
+      if(type == "reg")
+        response = await axios.post(process.env.URL_CHECK_USER, { email });
+        
+      if (response.status !== 200)
+        res.status(409).json({ message: "Скорее всего, этот email уже используется" });
+      
     } catch (error) {
       console.error("Ошибка при проверке email:", error.response?.data || error.message);
-      return res.status(500).json({ message: "При обработке запроса произошла ошибка" });
+      res.status(500).json({ message: "При обработке запроса произошла ошибка" });
     }
 
     const sessionId = generateSessionId();
@@ -76,14 +80,12 @@ app.post('/api/CreateSession', async (req, res) => {
           Validation: false,
         });
         break;
-
       case "chng":
         await SessionPass.create({
           SessionId: sessionId,
           Validation: false,
         });
         break;
-
       default:
         res.status(400).json({ message: "Неверный тип сессии" });
     }
@@ -109,26 +111,44 @@ app.post('/api/CreateSession', async (req, res) => {
 
 
 
-app.post('/api/CheckSession', async (req, res) => {
-  const { sessionId, code } = req.body;
+app.post('/api/CheckSession/Codes', async (req, res) => {
+  const { sessionId, code, type} = req.body;
+
+  if (!sessionId || !code || !type) {
+    return res.status(400).json({ message: "Код обязателен" });
+  }
+
   try {
-    const session = await SessionRegister.findOne({
+    session = await SessionCodes.findOne({
       where: { SessionId: sessionId },
     });
 
     if (!session) {
-      return res.status(404).json({
+      res.status(404).json({
         message: 'Сессия не найдена',
       });
     }
 
     if (session.CodeConfirm === parseInt(code)) {
-      const deletedRows = await SessionRegister.destroy({
-        where: { SessionId: SessionId }
-      });
-      return res.status(200).json();
+      let ses;
+
+      switch(type){
+        case "reg":
+          ses = SessionRegister.update({verified: true}, {where: {SessionId: SessionId}});
+          break;
+        case "chng":
+          ses = SessionPass.update({verified: true}, {where: {SessionId: SessionId}});
+          break;
+        default:
+          res.status(400).json({messege: "неверный тип"})
+
+        if(!ses)
+          res.status(500).json("Сервер не смог по какой-то причине верифицировать сессию");
+      }
+      
+      res.status(200);
     } else {
-      return res.status(400).json({
+      res.status(400).json({
         message: "Неверный код подтверждения",
       });
     }
@@ -139,14 +159,67 @@ app.post('/api/CheckSession', async (req, res) => {
   }
 });
 
+//http://localhost:3000api/CheckSession/Verify?param1=value1$param2=value2
+app.get('api/CheckSession/Verify', async (req, res) =>{
+    const { session, type } = req.query;
+
+    if(!session || !type)
+      res.status(400).json({message:"Сессия отсуствует в запрсе"})
+
+    try {
+      let ses;
+      switch(type){
+        case "reg":
+          ses = await SessionRegister.findOne({
+            where: { SessionId: session },
+          });
+          break;
+        case "chng":
+          ses = await SessionPass.findOne({
+            where: { SessionId: session },
+          });
+          break;
+        default:
+          res.status(409);
+      }
+
+      if(ses.verified)
+        res.status(200);
+
+      res.status(400);
+    } catch (error) {
+      console.error(error);
+      res.status(500);
+    }
+    
+})
+
 app.post('/api/RefreshCode', async (req, res) => {
-  const {email, session} = req.body;
+  const {email, session, type} = req.body;
   try {
     const newCode = generateCode();
 
-    await SessionRegister.create({
+    switch (type){
+      case "reg":
+        await SessionRegister.create({
+          SessionId: session,
+          Validation: false,
+        });
+        break;
+      case "chng":
+        await SessionPass.create({
+          SessionId: session,
+          Validation: false,
+        });
+        break;
+      default:
+        res.status(409)
+    }
+
+    await SessionCodes.create({
       SessionId: session,
-      CodeConfirm: newCode,
+      CodeConfirm: confirmCode,
+      TypeSession: type === "reg",
     });
 
     await sendEmailWithCode(email, newCode);

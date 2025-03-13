@@ -3,7 +3,9 @@
 <div id="header" align="center">
    <img title="" src="ТЗ/IconApp.svg" alt="Vkgramm Logo" data-align="center">
 </div>
-##📌 Описание
+
+
+## 📌 Описание
 
 Vkgramm — это современный мессенджер, разработанный командой **Necrodwarf**. Проект включает в себя серверную часть, вебсокет-сервер, сервис верификации почты и клиентское приложение.
 
@@ -66,19 +68,22 @@ Vkgramm/
    ```
 
 ## 📸 Скриншоты
+
 <div id="header" align="center">
 <img title="" src="ТЗ/1.jpg" alt="Главный экран" data-align="center" width="168">
 
 <img title="" src="ТЗ/3.jpg" alt="3.jpg" width="172" data-align="center">
 </div>
-##🏗️ Разработчики
+
+## 🏗️ Разработчики
 
 - **Necrodwarf Team**
-  
+
 <div id="header" align="center">
   <img title="" src="ТЗ/logo.png" alt="logo.png" width="335" data-align="center">
 </div>
-##📬 Контакты
+
+## 📬 Контакты
 
 ✉️ [kabanchikov.adventure@gmail.com](mailto:kabanchikov.adventure@gmail.com) | 🌐 [Website](https://your-website.com/)
 

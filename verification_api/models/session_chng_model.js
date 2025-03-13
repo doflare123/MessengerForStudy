@@ -12,7 +12,7 @@ const SessionPass = connection.define('SessionsPass',{
         type: DataTypes.STRING,
         allowNull: false, 
     },
-    Validation: {
+    verified: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false

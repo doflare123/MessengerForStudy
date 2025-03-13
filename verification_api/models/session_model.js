@@ -12,7 +12,7 @@ const SessionRegister = connection.define('Sessions', {
         type: DataTypes.STRING,
         allowNull: false, 
     },
-    Validation: {
+    verified: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
