@@ -49,7 +49,7 @@ async function sendEmailWithCode(recipientEmail, code) {
   }
 }
 
-app.post('/api/CreateSession', async (req, res) => {
+app.post('/api/CreateSession/register', async (req, res) => {
   try {
     const { email, type } = req.body;
     let response;
@@ -110,6 +110,41 @@ app.post('/api/CreateSession', async (req, res) => {
 });
 
 
+app.post('/api/CreateSession/account', async (req, res) =>{
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  } 
+
+  try {
+    const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
+    const senderEmail = decoded.email;
+
+    const sessionId = generateSessionId();
+    const confirmCode = generateCode();
+
+    await SessionPass.create({
+      SessionId: sessionId,
+      Validation: false,
+    });
+
+    await SessionCodes.create({
+      SessionId: sessionId,
+      CodeConfirm: confirmCode,
+      TypeSession: type === "reg",
+    });
+
+    await sendEmailWithCode(email, confirmCode);
+
+    res.status(200).json({
+      sessionId: sessionId,
+    });
+  } catch (error) {
+    
+  }
+})
+
 
 app.post('/api/CheckSession/Codes', async (req, res) => {
   const { sessionId, code, type} = req.body;
@@ -144,13 +179,30 @@ app.post('/api/CheckSession/Codes', async (req, res) => {
 
         if(!ses)
           res.status(500).json("Сервер не смог по какой-то причине верифицировать сессию");
-      }
+    }
       
       res.status(200);
     } else {
-      res.status(400).json({
-        message: "Неверный код подтверждения",
-      });
+      session.Attempts += 1;
+
+      if (session.Attempts >= 3) {
+        await session.destroy();
+        switch(type){
+          case "reg":
+            ses = SessionRegister.destroy({where: {SessionId: SessionId}});
+            break;
+          case "chng":
+            ses = SessionPass.destroy({where: {SessionId: SessionId}});
+            break;
+          default:
+            res.status(500).json({messege: "Ошибка сессии на сервере"})
+        }
+        return res.status(400).json({ message: "Превышено количество попыток, сессия удалена" });
+      } else {
+        await session.save();
+      }
+
+      return res.status(400).json({ message: "Неверный код подтверждения" });
     }
   } catch (error) {
     res.status(500).json({
