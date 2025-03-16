@@ -9,7 +9,6 @@ const { execSync } = require('child_process'); // Для синхронного 
 const { default: axios } = require('axios');
 const SessionPass = require('./models/session_chng_model');
 const SessionCodes = require('./models/session_codes_model');
-const messege = require('../backend/models/messages');
 
 const app = express();
 const PORT = 8082;
