@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Constants from 'expo-constants';
 
-const URL = Constants.expoConfig.extra.apiUrl;
+const URL = `ws://10.197.33.35:3000`;
 
 const WebSocketContext = createContext(null);
 

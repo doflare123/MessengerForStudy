@@ -2,16 +2,18 @@ import React, { useRef, useCallback, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, StyleSheet, Alert, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform  } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather.js';
-//import { useWebSocket } from '@/WebSoket/WSConnection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useWebSocket } from '@/WebSoket/WSConnection';
 
 import styles from '../../Styles/Styles.js';
 
 export default function LoginScreen({ navigation }) {
+    const socket = useWebSocket();
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [isSecure, setSecure] = useState(true);
     const [lightStyle, setLight] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleEmailChange = (text) => {
         setEmail(text);
@@ -29,8 +31,32 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate("Registration");
     }
 
-    const toDialogsScreen = () => {
-        navigation.replace("Dialogs");
+    const toDialogsScreen = async () => {
+        const message = {
+            type: 'login',
+            email: email,
+            password: password,
+        };
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+
+            socket.onmessage = async (event) => {
+                const data = JSON.parse(event.data); // Парсим полученные данные
+                console.log("Получено сообщение:", data);
+                
+                if (data.success){
+                    await AsyncStorage.setItem('JwtToken', data.refreshToken);
+                    await AsyncStorage.setItem('AccesToken', data.accessToken);
+                    
+                    setErrorMessage("");
+                    navigation.replace("Dialogs");
+                }
+                else
+                    setErrorMessage("Неверный лоигн или пароль");
+                
+            };
+        }
     }
 
     const toForgotScreen = () => {
@@ -70,6 +96,7 @@ export default function LoginScreen({ navigation }) {
                                 <Icon name={isSecure ? 'eye-off' : 'eye'} size={24} color="#00000" style={{position: "absolute", right: 20, top: -37}}/>
                             </TouchableOpacity>
                         </View>
+                         {errorMessage ? <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{errorMessage}</Text> : null}
                         <TouchableOpacity onPress={toForgotScreen}>
                             <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, {fontSize: 15, marginTop: Platform.OS === 'android' ? -60 : 0, textAlign: 'right'}]}>Забыли пароль?</Text>
                         </TouchableOpacity>

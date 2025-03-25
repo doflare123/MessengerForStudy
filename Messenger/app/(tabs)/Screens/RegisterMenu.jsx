@@ -11,6 +11,7 @@ import styles from '../../Styles/Styles.js';
 import strings from '../../../assets/Strings.json'
 
 export default function RegisterScreen() {
+    const socket = useWebSocket();
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -38,7 +39,22 @@ export default function RegisterScreen() {
             setErrorMessage("Заполните все поля корректно");
             return;
         }
+        else if (password.length <= 8){
+            setErrorMessage("Пароль должен быть больше 8 символов");
+            return;
+        }
         setErrorMessage("");
+
+        const message = {
+            type: 'register',
+            JwtToken: JwtToken,
+            text: messageText,
+            sender: UserId,
+            recipient: title, // имя оппонента
+            DataTime: currentTime,
+            Data: currentDate,
+        };
+
         navigation.navigate("Verify", { name, email, password });
     };
 
