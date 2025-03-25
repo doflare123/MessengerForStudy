@@ -5,7 +5,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import messageHandlers from './processingMessages/GeneralProc.js';
 
-dotenv.config({ path: "./Config.env" });
+dotenv.config({ path: "./.env" });
 
 const app = express();
 const PORT = 3000;
