@@ -3,12 +3,10 @@ const crypto = require('crypto');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config({ path: "./.env" });
-const SessionRegister = require('./models/session_model');
 const connection = require('./database');
-const { execSync } = require('child_process'); // Для синхронного выполнения команд
 const { default: axios } = require('axios');
-const SessionPass = require('./models/session_chng_model');
 const SessionCodes = require('./models/session_codes_model');
+const Session = require('./models/session_model');
 
 const app = express();
 const PORT = 8082;
@@ -49,45 +47,37 @@ async function sendEmailWithCode(recipientEmail, code) {
 }
 
 app.post('/api/CreateSession/register', async (req, res) => {
-  try {
-    const { email, type } = req.body;
-    let response;
-    if (!email || !type) {
-      res.status(400).json({ message: "Email обязателен" });
-    }
+  const { email, type } = req.body;
 
+  if (!email || !type) {
+    return res.status(400).json({ message: "Email и type обязательны" });
+  }
+
+  if (!["reg", "chng"].includes(type)) {
+    return res.status(400).json({ message: "Неверный тип сессии" });
+  }
+
+  if (type === "reg") {
     try {
-      if(type == "reg")
-        response = await axios.post(process.env.URL_CHECK_USER, { email });
-        
-      if (response.status !== 200)
-        res.status(409).json({ message: "Скорее всего, этот email уже используется" });
-      
+      const check = await axios.post(process.env.URL_CHECK_Email, { email });
+      if (check.status !== 200) {
+        return res.status(409).json({ message: "Email уже используется" });
+      }
     } catch (error) {
-      console.error("Ошибка при проверке email:", error.response?.data || error.message);
-      res.status(500).json({ message: "При обработке запроса произошла ошибка" });
+      console.log("ПРоблема в емейлах")
+      return res.status(500).json({ message: "Ошибка при проверке email" });
     }
+  }
 
-    const sessionId = generateSessionId();
-    const confirmCode = generateCode();
+  const sessionId = generateSessionId();
+  const confirmCode = generateCode();
 
-
-    switch (type) {
-      case "reg":
-        await SessionRegister.create({
-          SessionId: sessionId,
-          Validation: false,
-        });
-        break;
-      case "chng":
-        await SessionPass.create({
-          SessionId: sessionId,
-          Validation: false,
-        });
-        break;
-      default:
-        res.status(400).json({ message: "Неверный тип сессии" });
-    }
+  try {
+    await Session.create({
+      SessionId: sessionId,
+      Type: type,
+      verified: false,
+    });
 
     await SessionCodes.create({
       SessionId: sessionId,
@@ -97,189 +87,143 @@ app.post('/api/CreateSession/register', async (req, res) => {
 
     await sendEmailWithCode(email, confirmCode);
 
-    res.status(200).json({
-      sessionId: sessionId,
-    });
+    res.status(200).json({ sessionId });
   } catch (error) {
-    console.error("Ошибка создания сессии:", error);
-    res.status(500).json({
-      message: "При создании сессии произошла ошибка",
-    });
+    console.error("Ошибка при создании сессии:", error);
+    res.status(500).json({ message: "Ошибка сервера при создании сессии" });
   }
 });
 
 
-app.post('/api/CreateSession/account', async (req, res) =>{
+app.post('/api/CreateSession/account', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
     return res.status(401).json({ message: 'Токен не предоставлен' });
-  } 
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
-    const senderEmail = decoded.email;
+    const email = decoded.email;
 
     const sessionId = generateSessionId();
     const confirmCode = generateCode();
 
-    await SessionPass.create({
+    await Session.create({
       SessionId: sessionId,
-      Validation: false,
+      verified: false,
     });
 
     await SessionCodes.create({
       SessionId: sessionId,
       CodeConfirm: confirmCode,
-      TypeSession: type === "reg",
+      TypeSession: "chng",
     });
 
     await sendEmailWithCode(email, confirmCode);
 
-    res.status(200).json({
-      sessionId: sessionId,
-    });
+    res.status(200).json({ sessionId });
   } catch (error) {
-    
+    console.error("Ошибка в /CreateSession/account:", error);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
-})
+});
+
 
 
 app.post('/api/CheckSession/Codes', async (req, res) => {
-  const { sessionId, code, type} = req.body;
+  const { sessionId, code, type } = req.body;
 
   if (!sessionId || !code || !type) {
-    return res.status(400).json({ message: "Код обязателен" });
+    return res.status(400).json({ message: "Все поля обязательны" });
+  }
+
+  if (!["reg", "chng"].includes(type)) {
+    return res.status(400).json({ message: "Неверный тип сессии" });
   }
 
   try {
-    session = await SessionCodes.findOne({
-      where: { SessionId: sessionId },
-    });
+    const sessionCode = await SessionCodes.findOne({ where: { SessionId: sessionId } });
+    if (!sessionCode) return res.status(404).json({ message: "Сессия не найдена" });
 
-    if (!session) {
-      res.status(404).json({
-        message: 'Сессия не найдена',
-      });
+    if (sessionCode.CodeConfirm.toString() === code.toString()) {
+      await Session.update({ Verified: true }, { where: { SessionId: sessionId } });
+      return res.status(200).json({ message: "Код подтверждён" });
     }
 
-    if (session.CodeConfirm === parseInt(code)) {
-      let ses;
+    sessionCode.Attempts += 1;
 
-      switch(type){
-        case "reg":
-          ses = SessionRegister.update({verified: true}, {where: {SessionId: SessionId}});
-          break;
-        case "chng":
-          ses = SessionPass.update({verified: true}, {where: {SessionId: SessionId}});
-          break;
-        default:
-          res.status(400).json({messege: "неверный тип"})
-
-        if(!ses)
-          res.status(500).json("Сервер не смог по какой-то причине верифицировать сессию");
+    if (sessionCode.Attempts >= 3) {
+      await sessionCode.destroy();
+      await Session.destroy({ where: { SessionId: sessionId } });
+      return res.status(400).json({ message: "Превышено число попыток. Сессия удалена" });
     }
-      
-      res.status(200);
-    } else {
-      session.Attempts += 1;
 
-      if (session.Attempts >= 3) {
-        await session.destroy();
-        switch(type){
-          case "reg":
-            ses = SessionRegister.destroy({where: {SessionId: SessionId}});
-            break;
-          case "chng":
-            ses = SessionPass.destroy({where: {SessionId: SessionId}});
-            break;
-          default:
-            res.status(500).json({messege: "Ошибка сессии на сервере"})
-        }
-        return res.status(400).json({ message: "Превышено количество попыток, сессия удалена" });
-      } else {
-        await session.save();
-      }
+    await sessionCode.save();
+    res.status(400).json({ message: "Неверный код подтверждения" });
 
-      return res.status(400).json({ message: "Неверный код подтверждения" });
-    }
   } catch (error) {
-    res.status(500).json({
-      message: "При проверке сессии произошла ошибка на сервере",
-    });
+    console.error("Ошибка проверки кода:", error);
+    res.status(500).json({ message: "Ошибка сервера" });
   }
 });
 
 //http://localhost:3000api/CheckSession/Verify?param1=value1$param2=value2
-app.get('api/CheckSession/Verify', async (req, res) =>{
-    const { session, type } = req.query;
+app.get('/api/CheckSession/Verify', async (req, res) => {
+  const { session, type } = req.query;
 
-    if(!session || !type)
-      res.status(400).json({message:"Сессия отсуствует в запрсе"})
+  if (!session || !type) {
+    return res.status(400).json({ message: "session и type обязательны" });
+  }
 
-    try {
-      let ses;
-      switch(type){
-        case "reg":
-          ses = await SessionRegister.findOne({
-            where: { SessionId: session },
-          });
-          break;
-        case "chng":
-          ses = await SessionPass.findOne({
-            where: { SessionId: session },
-          });
-          break;
-        default:
-          res.status(409);
-      }
+  if (!["reg", "chng"].includes(type)) {
+    return res.status(400).json({ message: "Неверный тип сессии" });
+  }
 
-      if(ses.verified)
-        res.status(200);
+  try {
+    const sessionObj = await Session.findOne({ where: { SessionId: session } });
+    if (!sessionObj) return res.status(404).json({ message: "Сессия не найдена" });
 
-      res.status(400);
-    } catch (error) {
-      console.error(error);
-      res.status(500);
+    if (sessionObj.verified) {
+      return res.status(200).json({ Verified: true });
+    } else {
+      return res.status(200).json({ Verified: false });
     }
-    
-})
+
+  } catch (error) {
+    console.error("Ошибка верификации:", error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
 
 app.post('/api/RefreshCode', async (req, res) => {
-  const {email, session, type} = req.body;
+  const { email, session, type } = req.body;
+
+  if (!email || !session || !type) {
+    return res.status(400).json({ message: "email, session и type обязательны" });
+  }
+
+  if (!["reg", "chng"].includes(type)) {
+    return res.status(400).json({ message: "Неверный тип сессии" });
+  }
+
   try {
     const newCode = generateCode();
 
-    switch (type){
-      case "reg":
-        await SessionRegister.create({
-          SessionId: session,
-          Validation: false,
-        });
-        break;
-      case "chng":
-        await SessionPass.create({
-          SessionId: session,
-          Validation: false,
-        });
-        break;
-      default:
-        res.status(409)
-    }
-
-    await SessionCodes.create({
-      SessionId: session,
-      CodeConfirm: confirmCode,
-      TypeSession: type === "reg",
-    });
+    await SessionCodes.update(
+      { CodeConfirm: newCode, Attempts: 0 },
+      { where: { SessionId: session } }
+    );
 
     await sendEmailWithCode(email, newCode);
 
-    res.status(200);
+    res.status(200).json({ message: "Код обновлён и отправлен" });
   } catch (error) {
-    res.status(500);
+    console.error("Ошибка при обновлении кода:", error);
+    res.status(500).json({ message: "Ошибка сервера" });
   }
-})
+});
+
 
 connection.sync()
   .then(() => {
