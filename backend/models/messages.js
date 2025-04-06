@@ -5,7 +5,7 @@ const messeges = new mongoose.Schema({
     receiver_id: String,
     message_content: String,
     data: String,
-    tine: String,
+    time: Date,
     status: Boolean
 });
 
