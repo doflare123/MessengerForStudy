@@ -87,7 +87,7 @@ app.post('/api/CreateSession/register', async (req, res) => {
 
     await sendEmailWithCode(email, confirmCode);
 
-    res.status(200).json({ sessionId });
+    res.status(200).json({ session: sessionId });
   } catch (error) {
     console.error("Ошибка при создании сессии:", error);
     res.status(500).json({ message: "Ошибка сервера при создании сессии" });
