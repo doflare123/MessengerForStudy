@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../Styles/Styles.js';
 import strings from '../../../assets/Strings.json'
+import { useWebSocket } from '@/WebSoket/WSConnection';
 
 export default function RegisterScreen() {
     const socket = useWebSocket();
@@ -39,23 +40,35 @@ export default function RegisterScreen() {
             setErrorMessage("Заполните все поля корректно");
             return;
         }
-        else if (password.length <= 8){
-            setErrorMessage("Пароль должен быть больше 8 символов");
+        else if (password.length < 8){
+            setErrorMessage("Пароль должен быть не меньше 8 символов");
             return;
         }
         setErrorMessage("");
 
         const message = {
-            type: 'register',
-            JwtToken: JwtToken,
-            text: messageText,
-            sender: UserId,
-            recipient: title, // имя оппонента
-            DataTime: currentTime,
-            Data: currentDate,
+            type: 'CheckEmail',
+            email: email,
         };
+        
+        setErrorMessage("Загрузка");
 
-        navigation.navigate("Verify", { name, email, password });
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+
+            socket.onmessage = async (event) => {
+                const response = JSON.parse(event.data); // Парсим полученные данные
+                
+                if (response.success){
+                    setErrorMessage("");
+                    const session = response.data.session;
+                    navigation.replace("Verify", { name: name, email: email, password: password, session: session });
+                }
+                else
+                    setErrorMessage("Такой аккаунт уже существует");
+                
+            };
+        }
     };
 
     return (

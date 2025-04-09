@@ -5,8 +5,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../Styles/Styles.js';
+import { useWebSocket } from '@/WebSoket/WSConnection';
+import { useNavigation } from '@react-navigation/native';
 
 export default function VerifyScreen({ route }) {
+    const socket = useWebSocket();
     const [lightStyle, setLight] = useState(true);
     const [loadingText, setLoadingText] = useState(".");
     const [code, setCode] = useState();
@@ -14,10 +17,15 @@ export default function VerifyScreen({ route }) {
     const [canResend, setCanResend] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalText, setModalText] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const navigation = useNavigation();
 
     const screenHeight = Dimensions.get('window').height;
 
-    const { email } = route.params || {};
+    const email = route.params.email;
+    const password = route.params.password;
+    const name = route.params.name;
+    const session = route.params.session;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -47,8 +55,51 @@ export default function VerifyScreen({ route }) {
         setModalVisible(true);
     };
 
+    const regUser = () => {
+        const message = {
+            type: 'register',
+            name: name,
+            email: email,
+            password: password,
+        };
+        
+        socket.send(JSON.stringify(message));
+
+        socket.onmessage = async (event) => {
+            const  response = JSON.parse(event.data); // Парсим полученные данные
+            
+            if (response.success){
+                setErrorMessage("");
+                navigation.replace("Authorization");
+            }
+            else
+                setErrorMessage("Аккаунт не удалось создать");
+            
+        };
+    }
+
     const handleSend = () => {
-        alert("SEND SEND SEND");
+        const message = {
+            type: 'CheckCode',
+            code: code,
+            sessionId: session,
+        };
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+
+            socket.onmessage = async (event) => {
+                const response = JSON.parse(event.data); // Парсим полученные данные
+                
+                if (response.success){
+                    setErrorMessage("Загрузка");
+                    regUser();
+                }
+                else
+                    setErrorMessage("Неверный код");
+            };
+
+        }
     };
 
     return (
@@ -73,6 +124,7 @@ export default function VerifyScreen({ route }) {
                             placeholder="Код подтверждения"
                             onChangeText={setCode}
                         />
+                        {errorMessage ? <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{errorMessage}</Text> : null}
                         <View style={{ marginTop: 5 }}>
                             {canResend ? (
                                 <TouchableOpacity onPress={handleResend}>

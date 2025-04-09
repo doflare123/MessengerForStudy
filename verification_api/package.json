@@ -18,7 +18,9 @@
     "nodemailer": "^6.9.16",
     "nodemon": "^3.1.9",
     "pg": "^8.13.1",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",

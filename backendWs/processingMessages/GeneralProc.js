@@ -6,6 +6,8 @@ import Sentmess from "./SendMess.js";
 import SearchUsers from "./SearchUsers.js";
 import UserName from "./ChangeUserName.js"
 import UserPass from './ChangeUserPass.js';
+import CheckEmail from './checkEmail.js';
+import CheckCode from './checkCode.js';
 
 const messageHandlers = {
     login: LoginCheck,
@@ -15,7 +17,9 @@ const messageHandlers = {
     NewMessage: Sentmess,
     SearchUser: SearchUsers,
     ChangeName: UserName,
-    ChangePass: UserPass
+    ChangePass: UserPass,
+    CheckCode: CheckCode,
+    CheckEmail: CheckEmail
 };
 
 export default messageHandlers;

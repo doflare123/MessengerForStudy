@@ -42,13 +42,12 @@ export default function LoginScreen({ navigation }) {
             socket.send(JSON.stringify(message));
 
             socket.onmessage = async (event) => {
-                const data = JSON.parse(event.data); // Парсим полученные данные
-                console.log("Получено сообщение:", data);
+                const response = JSON.parse(event.data); // Парсим полученные данные
                 
-                if (data.success){
-                    await AsyncStorage.setItem('JwtToken', data.refreshToken);
-                    await AsyncStorage.setItem('AccesToken', data.accessToken);
-                    
+                if (response.success){
+                    await AsyncStorage.setItem('JwtToken', response.data.refreshToken);
+                    await AsyncStorage.setItem('AccesToken', response.data.accessToken);
+
                     setErrorMessage("");
                     navigation.replace("Dialogs");
                 }

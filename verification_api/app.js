@@ -8,10 +8,75 @@ const { default: axios } = require('axios');
 const SessionCodes = require('./models/session_codes_model');
 const Session = require('./models/session_model');
 
+const winston = require('winston');
+require('winston-daily-rotate-file');
+
 const app = express();
 const PORT = 8082;
 app.use(express.json());
 
+const logTransport = new winston.transports.DailyRotateFile({
+  filename: 'logs/server-%DATE%.log',
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '30d'
+});
+
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.simple()
+  ),
+  transports: [
+    new winston.transports.Console({ format: winston.format.simple() }),
+    logTransport
+  ],
+});
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  const ip = req.ip || req.connection.remoteAddress;
+
+  // Обертка res.send для логирования тела ответа (опционально)
+  const originalSend = res.send;
+  res.send = function (body) {
+    if (process.env.NODE_ENV === 'development') {
+      logger.debug(`📤 Ответ: ${body}`);
+    }
+    originalSend.call(this, body);
+  };
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const logLevel = res.statusCode >= 500 ? 'error' :
+                     res.statusCode >= 400 ? 'warn' : 'info';
+
+    logger.log({
+      level: logLevel,
+      message: `📨 ${req.method} ${req.originalUrl} → ${res.statusCode} | 🕒 ${duration}ms | 🌐 IP: ${ip}`
+    });
+  });
+
+  next();
+});
+
+app.use((err, req, res, next) => {
+  const statusCode = err.status || 500;
+  const ip = req.ip || req.connection.remoteAddress;
+
+  logger.error(`❌ Ошибка при ${req.method} ${req.originalUrl}
+▶️ Статус: ${statusCode}
+▶️ IP: ${ip}
+▶️ Сообщение: ${err.message}
+▶️ Стек: ${err.stack}`);
+
+  res.status(statusCode).json({
+    status: 'error',
+    message: err.message,
+  });
+});
 
 // Функция для генерации случайного кода подтверждения
 function generateCode(length = 6) {

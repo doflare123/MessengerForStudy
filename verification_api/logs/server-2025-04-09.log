@@ -1,0 +1,44 @@
+debug: 📤 Ответ: {"session":"052abff7c842"} {"timestamp":"2025-04-09T16:46:34.631Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2910ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:46:34.633Z"}
+debug: 📤 Ответ: {"session":"33a498ae13bb"} {"timestamp":"2025-04-09T16:50:49.150Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2386ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:50:49.151Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T16:50:59.512Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 610ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:50:59.512Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T16:51:37.336Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 352ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:51:37.337Z"}
+debug: 📤 Ответ: {"session":"a01025353650"} {"timestamp":"2025-04-09T16:53:21.704Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 1808ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:53:21.705Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T16:53:30.487Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 83ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:53:30.487Z"}
+debug: 📤 Ответ: {"session":"53ad095730b7"} {"timestamp":"2025-04-09T16:56:24.257Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 1860ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:56:24.258Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T16:56:32.168Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 81ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:56:32.169Z"}
+debug: 📤 Ответ: {"session":"9ac286b4eaf1"} {"timestamp":"2025-04-09T16:59:18.818Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2067ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:59:18.819Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T16:59:28.209Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 358ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T16:59:28.210Z"}
+debug: 📤 Ответ: {"session":"2c87cae9c3ae"} {"timestamp":"2025-04-09T17:03:56.324Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2493ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:03:56.324Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T17:04:04.684Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 81ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:04:04.684Z"}
+debug: 📤 Ответ: {"session":"3a3b47a91c43"} {"timestamp":"2025-04-09T17:09:56.950Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2204ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:09:56.951Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T17:10:06.268Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 434ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:10:06.269Z"}
+debug: 📤 Ответ: {"session":"8fa8e4089674"} {"timestamp":"2025-04-09T17:11:21.634Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2500ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:11:21.634Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T17:11:30.466Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 349ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:11:30.467Z"}
+debug: 📤 Ответ: {"session":"cb27dbf87610"} {"timestamp":"2025-04-09T17:12:18.490Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 1878ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:12:18.491Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T17:12:26.869Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 82ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:12:26.869Z"}
+debug: 📤 Ответ: {"session":"ea347bab1bb3"} {"timestamp":"2025-04-09T17:14:37.928Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2249ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:14:37.929Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T17:14:46.397Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 79ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:14:46.398Z"}
+debug: 📤 Ответ: {"session":"847b5f2a9207"} {"timestamp":"2025-04-09T17:23:17.552Z"}
+info: 📨 POST /api/CreateSession/register → 200 | 🕒 2156ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:23:17.553Z"}
+debug: 📤 Ответ: {"message":"Код подтверждён"} {"timestamp":"2025-04-09T17:23:25.513Z"}
+info: 📨 POST /api/CheckSession/Codes → 200 | 🕒 78ms | 🌐 IP: ::1 {"timestamp":"2025-04-09T17:23:25.513Z"}
