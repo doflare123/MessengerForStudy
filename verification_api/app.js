@@ -184,7 +184,7 @@ app.get('/api/CheckSession/Verify', async (req, res) => {
     const sessionObj = await Session.findOne({ where: { SessionId: session } });
     if (!sessionObj) return res.status(404).json({ message: "Сессия не найдена" });
 
-    if (sessionObj.verified) {
+    if (sessionObj.Verified) {
       return res.status(200).json({ Verified: true });
     } else {
       return res.status(200).json({ Verified: false });
