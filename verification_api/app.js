@@ -210,10 +210,11 @@ app.post('/api/RefreshCode', async (req, res) => {
   try {
     const newCode = generateCode();
 
-    await SessionCodes.update(
-      { CodeConfirm: newCode, Attempts: 0 },
-      { where: { SessionId: session } }
-    );
+    await SessionCodes.create({
+      SessionId: sessionId,
+      CodeConfirm: newCode,
+      TypeSession: type,
+    });
 
     await sendEmailWithCode(email, newCode);
 
