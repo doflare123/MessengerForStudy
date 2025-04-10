@@ -40,8 +40,8 @@ Vkgramm/
 1. **Клонировать репозиторий:**
    
    ```sh
-   git clone https://github.com/your-repo/vkgramm.git
-   cd vkgramm
+   git clone [https://github.com/your-repo/vkgramm.git](https://github.com/doflare123/MessengerForStudy.git)
+   cd MessengerForStudy
    ```
 
 2. **Установить зависимости:**
