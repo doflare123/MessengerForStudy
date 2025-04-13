@@ -91,6 +91,38 @@ exports.PswdChng = async (req, res) => {
     }
 };
 
+exports.PswdChngAcc = async (req, res) => {
+    const { newPswd } = req.body;
+
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: 'Токен не предоставлен' });
+    }
+
+
+    try {
+        const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
+        const userEmail = decoded.email;
+
+        const salt = generateSalt();
+        const hash = hashPassword(newPswd, salt);
+
+        const [updatedRows] = await User.update(
+            { password_hash: hash, salt: salt },
+            { where: { email: userEmail } }
+        );
+
+        if (updatedRows === 0)
+            return res.status(500).json({ message: "Не удалось сменить пароль, попробуйте позже" });
+
+        res.status(200).json({ message: "Пароль успешно сменен" });
+    } catch (error) {
+        console.warn(error);
+        res.status(500).json({ message: "Сервер не смог обработать данные или запрос" });
+    }
+};
+
 
 exports.DeleteAccount = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
