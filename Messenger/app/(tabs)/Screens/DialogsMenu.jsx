@@ -21,13 +21,13 @@ export default function DialogsScreen({ route }) {
     };
 
     const toProfile = (id) => {
-        navigation.navigate("Profile");
+        navigation.replace("Profile");
     };
 
 
     const toDialog = (id, name) => {
         console.log("Открытие диалога с ID:", id);
-        navigation.navigate("Chat", { id, name });
+        navigation.replace("Chat", { id, name });
     };
 
     useEffect(() => {

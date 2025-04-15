@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-async function UserPass(ws, { JwtToken, newPswd }) {
+async function DeleteUser(ws, { JwtToken }) {
     try {
-        const response = await axios.patch(process.env.URL_CKECK_CHANGEPASSACC, { newPswd }, {headers: {'Authorization': `Bearer ${JwtToken}`}});
+        const response = await axios.delete(process.env.URL_CKECK_DELETEACCOUNT, {headers: {'Authorization': `Bearer ${JwtToken}`}});
         ws.send(JSON.stringify(response.data)); // Успешный ответ клиенту
     } catch (err) {
         console.error('Ошибка при отправке запроса:', err.message);
@@ -10,4 +10,4 @@ async function UserPass(ws, { JwtToken, newPswd }) {
     }
 }
 
-export default UserPass;
+export default DeleteUser;

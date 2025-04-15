@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-async function UserName(ws, { JwtToken, UserId, NewName }) {
+async function UserName(ws, { JwtToken, userName }) {
     try {
-        const response = await axios.post(process.env.URL_CKECK_CHANGENAME, { JwtToken, UserId, NewName });
+        const response = await axios.post(process.env.URL_CKECK_CHANGENAME, { JwtToken, userName });
         ws.send(JSON.stringify(response.data)); // Успешный ответ клиенту
     } catch (err) {
         console.error('Ошибка при отправке запроса:', err.message);

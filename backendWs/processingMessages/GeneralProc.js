@@ -8,6 +8,7 @@ import UserName from "./ChangeUserName.js"
 import UserPass from './ChangeUserPass.js';
 import CheckEmail from './checkEmail.js';
 import CheckCode from './checkCode.js';
+import DeleteUser from './DeleteUser.js';
 
 const messageHandlers = {
     login: LoginCheck,
@@ -19,7 +20,8 @@ const messageHandlers = {
     ChangeName: UserName,
     ChangePass: UserPass,
     CheckCode: CheckCode,
-    CheckEmail: CheckEmail
+    CheckEmail: CheckEmail,
+    DelUser: DeleteUser,
 };
 
 export default messageHandlers;

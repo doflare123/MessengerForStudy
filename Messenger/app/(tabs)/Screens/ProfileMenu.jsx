@@ -10,16 +10,38 @@ import Icon2 from 'react-native-vector-icons/Entypo.js';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useWebSocket } from '@/WebSoket/WSConnection';
+import { GetToken } from '../../../JwtTokens/JwtStorege.js';
+import { decodeJwt } from '../../../JwtTokens/JwtStorege.js';
 
 export default function DialogsScreen({ route }) {
+    const socket = useWebSocket();
     const [lightStyle, setLight] = useState(true);
     const [avatar, setAvatar] = useState(null);
-    const [userName, setName] = useState("Перри Утконос");
+    const [userName, setName] = useState("...");
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
     const [modalText, setModalText] = useState("");
     const [inputValue, setInputValue] = useState("");
     const [inputType, setInputType] = useState(null);
+    const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+
+    const [JwtToken, setJwtToken] = useState();
+
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                setJwtToken(await GetToken());
+                const decoded = decodeJwt(JwtToken);
+                setName(decoded?.username || "Без имени"); // если в токене есть имя
+            } catch (error) {
+                console.error("Ошибка при получении токена: ", error);
+            }
+        };
+        
+        fetchToken();
+    }, []);    
+    
 
     const changeAvatar = async () => {
         // Request permission to access the media library
@@ -52,26 +74,49 @@ export default function DialogsScreen({ route }) {
         setModalVisible(true);
     };
 
-    const saveInput = () => {
+    const saveInput = async () => {
         if (inputType === 'name') {
             setName(inputValue);
         } else {
-            console.log("Новый пароль:", inputValue);
+
+            const message = {
+                type: 'ChangePass',
+                JwtToken: JwtToken,
+                newPswd: inputValue,
+            };
+            
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
         }
         setModalVisible(false);
     };
 
     const toDialogs = () => {
-        navigation.goBack();
+        navigation.replace("Dialogs");
     };
 
     const exit = () => {
-        navigation.navigate("Authorization");
+        navigation.replace("Authorization");
     };
 
     const deleteAcc = () => {
-        navigation.navigate("Authorization");
+        setConfirmDeleteVisible(true); 
     };
+    
+    const confirmDelete = () => {
+        const message = {
+            type: 'DelUser',
+            JwtToken: JwtToken,
+        };
+    
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+        }
+    
+        setConfirmDeleteVisible(false);
+        navigation.replace("Authorization");
+    };    
 
     const handleIValueChange = (text) => {
         setInputValue(text);
@@ -153,6 +198,36 @@ export default function DialogsScreen({ route }) {
                             </View>
                         </View>
                     </Modal>
+
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={confirmDeleteVisible}
+                        onRequestClose={() => setConfirmDeleteVisible(false)}
+                    >
+                        <View style={lstyles.overlay}>
+                            <View style={styles.modalView}>
+                                <Text style={[styles.modalText, { textAlign: 'center', marginBottom: 20 }]}>
+                                    Вы точно хотите удалить аккаунт?
+                                </Text>
+                                <View style={lstyles.buttonContainer}>
+                                    <TouchableOpacity
+                                        onPress={() => setConfirmDeleteVisible(false)}
+                                        style={[lightStyle ? styles.lightBtn : styles.darkBtn, { backgroundColor: '#888', width: 100, height: 40 }]}
+                                    >
+                                        <Text style={lightStyle ? styles.lightText : styles.darkText}>Отмена</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={confirmDelete}
+                                        style={[lightStyle ? styles.lightBtn : styles.darkBtn, { backgroundColor: '#D70000', width: 100, height: 40 }]}
+                                    >
+                                        <Text style={lightStyle ? styles.lightText : styles.darkText}>Удалить</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+
                 </SafeAreaView>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
