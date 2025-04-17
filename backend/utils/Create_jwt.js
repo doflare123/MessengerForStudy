@@ -5,10 +5,11 @@ dotenv.config({ path: "./Config.env" });
 
 
 
-async function CreateJWT(username, email){
+async function CreateJWT(username, email, avatar){
     const payload = {
         username: username,
         email: email,
+        avatar: avatar,
         Enterprise: "Necrodwarf"
     }
 

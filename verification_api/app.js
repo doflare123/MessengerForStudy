@@ -122,7 +122,7 @@ app.post('/api/CreateSession/register', async (req, res) => {
     return res.status(400).json({ message: "Неверный тип сессии" });
   }
 
-  if (type === "reg") {
+  if (type === "reg" || type === "chng") {
     try {
       const check = await axios.post(process.env.URL_CHECK_Email, { email });
       if (check.status !== 200) {
@@ -212,7 +212,7 @@ app.post('/api/CheckSession/Codes', async (req, res) => {
     if (!sessionCode) return res.status(404).json({ message: "Сессия не найдена" });
 
     if (sessionCode.CodeConfirm.toString() === code.toString()) {
-      await Session.update({ Verified: true }, { where: { SessionId: sessionId } });
+      await Session.update({ Verified: true }, { where: { SessionId: sessionId, Type: type } });
       return res.status(200).json({ message: "Код подтверждён" });
     }
 
