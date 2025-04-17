@@ -44,7 +44,7 @@ exports.GetDialods = async (req, res) => {
                 const contact = await User.findByPk(contactId, { attributes: ['id', 'username', 'email'] });
 
                 return {
-                    contact: contact ? { username: contact.username, email: contact.email } : null,
+                    contact: contact ? { username: contact.username, email: contact.email, avatar: contact.avatar } : null,
                     lastMessage: lastMessage ? {
                         sender_id: lastMessage.sender_id,
                         receiver_id: lastMessage.receiver_id,
