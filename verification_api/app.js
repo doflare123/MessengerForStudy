@@ -124,7 +124,9 @@ app.post('/api/CreateSession/register', async (req, res) => {
 
   if (type === "reg") {
     try {
-      const check = await axios.post(process.env.URL_CHECK_Email, { email });
+      const check = await axios.post(process.env.URL_CHECK_Email, { email }, {
+        validateStatus: () => true
+      });
       if (check.status !== 200) {
         return res.status(409).json({ message: "Email уже используется" });
       }
@@ -135,8 +137,13 @@ app.post('/api/CreateSession/register', async (req, res) => {
   }
   if(type === "chng"){
     try {
-      const check = await axios.post(process.env.URL_CHECK_Email, { email });
+      console.log(type)
+      const check = await axios.post(process.env.URL_CHECK_Email, { email }, {
+        validateStatus: () => true
+      });
+      console.log(check)
     } catch (error) {
+      console.log("облема в емейлах")
       return res.status(500).json({ message: "Ошибка при проверке email" });
     }
   }
