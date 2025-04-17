@@ -5,10 +5,12 @@ import Icon from 'react-native-vector-icons/Feather.js';
 //import { useWebSocket } from '@/WebSoket/WSConnection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useWebSocket } from '@/WebSoket/WSConnection';
 
 import styles from '../../Styles/Styles.js';
 
 export default function LoginScreen({ route }) {
+    const socket = useWebSocket();
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
     const [lightStyle, setLight] = useState(true);
@@ -24,13 +26,26 @@ export default function LoginScreen({ route }) {
     const handlePswdChange = (text) => {
         setPassword(text);
     };
-
+    
     const toLoginScreen = () => {
         if (password!=password2) {
             setErrorMessage("Заполните все поля корректно");
             return;
         }
         setErrorMessage("");
+
+        const message = {
+            type: 'ChangePassFogive',
+            email: email,
+            newPswd: password,
+        };
+
+        console.log("email", email)
+        
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+        }
+
         navigation.navigate("Authorization");
     }
     

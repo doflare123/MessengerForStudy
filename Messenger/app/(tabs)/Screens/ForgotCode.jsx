@@ -6,16 +6,20 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../Styles/Styles.js';
 import { useNavigation } from '@react-navigation/native';
+import { useWebSocket } from '@/WebSoket/WSConnection';
 
 export default function VerifyScreen({ route }) {
+    const socket = useWebSocket();
     const [lightStyle, setLight] = useState(true);
     const [loadingText, setLoadingText] = useState(".");
     const [code, setCode] = useState();
     const [timer, setTimer] = useState(30);
     const [canResend, setCanResend] = useState(false);
     const navigation = useNavigation();
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const { email } = route.params || {};
+    const email = route.params.email;
+    const session = route.params.session;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -41,7 +45,26 @@ export default function VerifyScreen({ route }) {
     };
 
     const handleSend = () => {
-        navigation.navigate("ForgotPswd");
+        const message = {
+            type: 'checkCodeForgive',
+            code: code,
+            sessionId: session,
+        };
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+
+            socket.onmessage = async (event) => {
+                const response = JSON.parse(event.data); // Парсим полученные данные
+                
+                if (response.success){
+                    setErrorMessage("");
+                    navigation.replace("ForgotPswd", {email});
+                }
+                else
+                    setErrorMessage("Неверный код");
+            };
+        }
     };
 
     return (
@@ -66,6 +89,7 @@ export default function VerifyScreen({ route }) {
                             placeholder="Код подтверждения"
                             onChangeText={setCode}
                         />
+                         {errorMessage ? <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{errorMessage}</Text> : null}
                         <View style={{ marginTop: 5 }}>
                             {canResend ? (
                                 <TouchableOpacity onPress={handleResend}>

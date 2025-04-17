@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useWebSocket } from '@/WebSoket/WSConnection';
+import { GetToken } from '../../../JwtTokens/JwtStorege.js';
 
 import styles from '../../Styles/Styles.js';
 
@@ -47,7 +48,8 @@ export default function LoginScreen({ navigation }) {
                 if (response.success){
                     await AsyncStorage.setItem('JwtToken', response.data.refreshToken);
                     await AsyncStorage.setItem('AccesToken', response.data.accessToken);
-
+                    
+                    console.log("JwtToken", await GetToken()) 
                     setErrorMessage("");
                     navigation.replace("Dialogs");
                 }

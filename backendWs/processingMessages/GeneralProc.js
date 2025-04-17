@@ -9,6 +9,10 @@ import UserPass from './ChangeUserPass.js';
 import CheckEmail from './checkEmail.js';
 import CheckCode from './checkCode.js';
 import DeleteUser from './DeleteUser.js';
+import ChangeUserAvatar from './ChangeUserAvatar.js';
+import checkEmailForgive from './checkEmailForgive.js';
+import checkCodeForgive from './checkCodeForgive.js';
+import ChangePassFogive from './ChangePassFogive.js';
 
 const messageHandlers = {
     login: LoginCheck,
@@ -22,6 +26,10 @@ const messageHandlers = {
     CheckCode: CheckCode,
     CheckEmail: CheckEmail,
     DelUser: DeleteUser,
+    ChangeUserAvatar: ChangeUserAvatar,
+    checkEmailForgive: checkEmailForgive,
+    checkCodeForgive: checkCodeForgive,
+    ChangePassFogive: ChangePassFogive,
 };
 
 export default messageHandlers;

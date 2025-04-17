@@ -4,10 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather.js';
 //import { useWebSocket } from '@/WebSoket/WSConnection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useWebSocket } from '@/WebSoket/WSConnection';
 
 import styles from '../../Styles/Styles.js';
 
 export default function LoginScreen({ navigation }) {
+    const socket = useWebSocket();
     const [email, setEmail] = useState("");
     const [lightStyle, setLight] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
@@ -27,7 +29,29 @@ export default function LoginScreen({ navigation }) {
             return;
         }
         setErrorMessage("");
-        navigation.navigate("ForgotCode", { email });
+
+        const message = {
+            type: 'checkEmailForgive',
+            email: email,
+        };
+        
+        setErrorMessage("Загрузка");
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+
+            socket.onmessage = async (event) => {
+                const response = JSON.parse(event.data); // Парсим полученные данные
+                
+                if (response.success){
+                    setErrorMessage("");
+                    const session = response.data.session;
+                    navigation.replace("ForgotCode", { email: email, session: session });
+                }
+                else
+                    setErrorMessage("Такой аккаунт не существует");
+            };
+        }
     }
     
     return (

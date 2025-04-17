@@ -11,8 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useWebSocket } from '@/WebSoket/WSConnection';
-import { GetToken } from '../../../JwtTokens/JwtStorege.js';
-import { decodeJwt } from '../../../JwtTokens/JwtStorege.js';
+import { decodeJwt, GetToken } from '../../../JwtTokens/JwtStorege.js';
 
 export default function DialogsScreen({ route }) {
     const socket = useWebSocket();
@@ -26,28 +25,35 @@ export default function DialogsScreen({ route }) {
     const [inputType, setInputType] = useState(null);
     const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
 
-    const [JwtToken, setJwtToken] = useState();
+    const [JwtToken, setJwtToken] = useState(); 
 
     useEffect(() => {
         const fetchToken = async () => {
+            const token = await GetToken();
+            setJwtToken(token);
+        };
+
+        fetchToken();
+    }, []);
+
+    useEffect(() => {
+        if (JwtToken) {
             try {
-                setJwtToken(await GetToken());
                 const decoded = decodeJwt(JwtToken);
-                setName(decoded?.username || "Без имени"); // если в токене есть имя
+                setName(decoded?.username || "Без имени");
+                setAvatar(decoded?.avatar || "");
             } catch (error) {
                 console.error("Ошибка при получении токена: ", error);
             }
-        };
-        
-        fetchToken();
-    }, []);    
+        }
+    }, [JwtToken]);  
     
 
     const changeAvatar = async () => {
         // Request permission to access the media library
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
-            Alert.alert('Permission required', 'You need to grant permission to access the media library.');
+            Alert.alert('Требуется разрешение', 'Необходимо предоставить разрешение для доступа к медиатеке.');
             return;
         }
     
@@ -60,10 +66,19 @@ export default function DialogsScreen({ route }) {
         });
     
         if (!result.canceled) {
-            // Access the base64-encoded string
+            
             const base64String = result.assets[0].base64;
             setAvatar(base64String);
-            // You can now use the base64String as needed
+
+            const message = {
+                type: 'ChangeUserAvatar',
+                JwtToken: JwtToken,
+                avatar: base64String,
+            };
+            
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
         }
     };
 

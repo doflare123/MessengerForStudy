@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { WebSocketServer } from 'ws';
 
-async function CheckCode(ws, {code, sessionId} ) {
+async function CheckEmailForgive(ws, {email} ) {
     try {
-        const response = await axios.patch(process.env.URL_CKECK_CODECONFIRM, { sessionId, code, type: 'reg' });
+        console.log("email", email)
+        const response = await axios.post(process.env.URL_CKECK_SESSIONCREATE, { email: email, type: 'chng' });
         ws.send(JSON.stringify({success: true, data: response.data})); //успешный ответ клиенту
     } catch (err) {
         console.error('Ошибка при отправке запроса:', err.message);
@@ -13,4 +14,4 @@ async function CheckCode(ws, {code, sessionId} ) {
 }
 
 
-export default CheckCode;
+export default CheckEmailForgive;
