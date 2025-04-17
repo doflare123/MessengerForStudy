@@ -122,14 +122,21 @@ app.post('/api/CreateSession/register', async (req, res) => {
     return res.status(400).json({ message: "Неверный тип сессии" });
   }
 
-  if (type === "reg" || type === "chng") {
+  if (type === "reg") {
     try {
       const check = await axios.post(process.env.URL_CHECK_Email, { email });
-      if (check.status !== 200 && type === "reg" ) {
+      if (check.status !== 200) {
         return res.status(409).json({ message: "Email уже используется" });
       }
     } catch (error) {
       console.log("ПРоблема в емейлах")
+      return res.status(500).json({ message: "Ошибка при проверке email" });
+    }
+  }
+  if(type === "chng"){
+    try {
+      const check = await axios.post(process.env.URL_CHECK_Email, { email });
+    } catch (error) {
       return res.status(500).json({ message: "Ошибка при проверке email" });
     }
   }
