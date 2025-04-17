@@ -36,7 +36,7 @@ const logger = winston.createLogger({
   ],
 });
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Логирование тела запроса (в dev-среде)
 app.use((req, res, next) => {
