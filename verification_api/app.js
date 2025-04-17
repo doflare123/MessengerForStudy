@@ -125,7 +125,7 @@ app.post('/api/CreateSession/register', async (req, res) => {
   if (type === "reg" || type === "chng") {
     try {
       const check = await axios.post(process.env.URL_CHECK_Email, { email });
-      if (check.status !== 200) {
+      if (check.status !== 200 && type === "reg" ) {
         return res.status(409).json({ message: "Email уже используется" });
       }
     } catch (error) {
