@@ -25,7 +25,7 @@ const User = connection.define('User', {
         allowNull: false,
     },
     avatar:{
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
     },
 }, {
