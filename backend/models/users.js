@@ -27,6 +27,7 @@ const User = connection.define('User', {
     avatar:{
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: "https://res.cloudinary.com/dntadqnty/image/upload/v1745007935/bgAva_hlxfka.jpg"
     },
 }, {
     tableName: 'users',
