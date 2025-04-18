@@ -16,59 +16,61 @@ exports.GetDialods = async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
-        const userId = decoded.id;
+        const userEmail = decoded.email;
 
-        try {
-            const contacts = await Contact.findAll({
-                where: {
-                    [Op.or]: [{ user_id: userId }, { contact_id: userId }]
-                }
-            });
+        const user = await User.findOne({ where: { email: userEmail } });
+        if (!user) return res.status(404).json({ message: 'Пользователь не найден' });
 
-            const userIds = contacts.map(contact => 
-                contact.user_id === userId ? contact.contact_id : contact.user_id
-            );
-
-            if (userIds.length === 0) {
-                return res.status(200).json({ dialogs: [] });
+        const contacts = await Contact.findAll({
+            where: {
+                [Op.or]: [{ user_id: user.id }, { contact_id: user.id }]
             }
+        });
 
-            const dialogs = await Promise.all(userIds.map(async (contactId) => {
-                const lastMessage = await Message.findOne({
-                    $or: [
-                        { sender_id: String(userId), receiver_id: String(contactId) },
-                        { sender_id: String(contactId), receiver_id: String(userId) }
-                    ]
-                }).sort({ data: -1 }).limit(1);
+        const userIds = contacts.map(contact =>
+            contact.user_id === user.id ? contact.contact_id : contact.user_id
+        );
 
-                const contact = await User.findByPk(contactId, { attributes: ['id', 'username', 'email', 'avatar']  });
-
-                return {
-                    contact: contact ? {
-                        username: contact.username,
-                        email: contact.email,
-                        avatar: contact.avatar
-                      } : null,
-                    lastMessage: lastMessage ? {
-                        sender_id: lastMessage.sender_id,
-                        receiver_id: lastMessage.receiver_id,
-                        message_content: lastMessage.message_content,
-                        data: lastMessage.data,
-                        status: lastMessage.status
-                    } : null
-                };
-            }));
-
-            return res.status(200).json({ dialogs });
-
-        } catch (error) {
-            return res.status(200).json({ msg: "Диалогов пока нет" });
+        if (userIds.length === 0) {
+            return res.status(200).json({ dialogs: [] });
         }
 
+        const dialogs = await Promise.all(userIds.map(async (contactId) => {
+            const lastMessage = await Messege.findOne({
+                $or: [
+                    { sender_id: String(user.id), receiver_id: String(contactId) },
+                    { sender_id: String(contactId), receiver_id: String(user.id) }
+                ]
+            }).sort({ time: -1 }).limit(1);
+
+            const contact = await User.findByPk(contactId, {
+                attributes: ['id', 'username', 'email', 'avatar']
+            });
+
+            return {
+                contact: contact ? {
+                    username: contact.username,
+                    email: contact.email,
+                    avatar: contact.avatar
+                } : null,
+                lastMessage: lastMessage ? {
+                    sender_id: lastMessage.sender_id,
+                    receiver_id: lastMessage.receiver_id,
+                    message_content: lastMessage.message_content,
+                    data: lastMessage.data,
+                    status: lastMessage.status
+                } : null
+            };
+        }));
+
+        return res.status(200).json({ dialogs });
+
     } catch (error) {
+        console.error("Ошибка получения диалогов:", error);
         return res.status(403).json({ error: "Истекший токен или невалидный" });
     }
 };
+
 
 
 exports.GetMessages = async (req, res) => {
