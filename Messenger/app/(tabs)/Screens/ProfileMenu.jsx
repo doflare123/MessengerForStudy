@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useWebSocket } from '@/WebSoket/WSConnection';
-import { decodeJwt, GetToken } from '../../../JwtTokens/JwtStorege.js';
+import { decodeJwt, GetToken, GetAvatar} from '../../../JwtTokens/JwtStorege.js';
 
 export default function DialogsScreen({ route }) {
     const socket = useWebSocket();
@@ -30,6 +30,8 @@ export default function DialogsScreen({ route }) {
     useEffect(() => {
         const fetchToken = async () => {
             const token = await GetToken();
+            const ava = await GetAvatar();
+            setAvatar(ava);
             setJwtToken(token);
         };
 
@@ -37,50 +39,67 @@ export default function DialogsScreen({ route }) {
     }, []);
 
     useEffect(() => {
-        if (JwtToken) {
+        if (JwtToken && avatar) {
             try {
                 const decoded = decodeJwt(JwtToken);
                 setName(decoded?.username || "Без имени");
-                setAvatar(decoded?.avatar || "");
+                setAvatar(avatar || "");
             } catch (error) {
                 console.error("Ошибка при получении токена: ", error);
             }
         }
-    }, [JwtToken]);  
+    }, [JwtToken, avatar]);  
     
 
     const changeAvatar = async () => {
-        // Request permission to access the media library
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
             Alert.alert('Требуется разрешение', 'Необходимо предоставить разрешение для доступа к медиатеке.');
             return;
         }
     
-        // Launch the image picker
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            base64: true, // Request base64-encoded string
             quality: 1,
         });
     
         if (!result.canceled) {
-            
-            const base64String = result.assets[0].base64;
-            setAvatar(base64String);
-
-            const message = {
-                type: 'ChangeUserAvatar',
-                JwtToken: JwtToken,
-                avatar: base64String,
-            };
-            
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify(message));
+            const newAvatar = result.assets[0].uri;
+            setAvatar(newAvatar);
+    
+            const localUri = result.assets[0].uri;
+            const filename = localUri.split('/').pop();
+            const match = /\.(\w+)$/.exec(filename ?? '');
+            const type = match ? `image/${match[1]}` : `image`;
+    
+            const formData = new FormData();
+            formData.append('avatar', {
+                uri: localUri,
+                name: filename,
+                type,
+            });
+    
+            try {
+                const res = await fetch('http://10.197.33.35:8081/api/account/ChangeAvatar', {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${JwtToken}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: formData,
+                });
+    
+                const data = await res.json();
+                if (res.ok) {
+                    setAvatar(data.avatarUrl);
+                    await AsyncStorage.setItem('Avatar', data.avatarUrl);
+                }
+            } catch (err) {
+                console.error(err);
             }
         }
-    };
+    };    
 
     const openModal = (type) => {
         setInputType(type);
@@ -170,7 +189,7 @@ export default function DialogsScreen({ route }) {
                         <View style={[styles.horizontalLine, { marginTop: 5, backgroundColor: '#186FE1', opacity: 0.6, height: 2 }]}></View>
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        <Image source={{ uri: 'data:image/jpeg;base64,' + avatar }} style={{marginTop: 15, borderRadius: 150, width: 150, height: 150}} />
+                        <Image source={{ uri: avatar }} style={{marginTop: 15, borderRadius: 150, width: 150, height: 150}} />
                         <Text style={[lightStyle ? styles.lightTextBg2 : styles.darkTextBg2, { fontSize: 30, marginTop: 5, marginBottom: 15 }]}>{userName}</Text>
                         {buttons.map((btn, index) => (
                             <TouchableOpacity key={index} style={{ borderRadius: 60, backgroundColor: "#DFDFDF", width: 325, height: 75, alignItems: 'center', justifyContent: 'center', marginTop: 20 }} onPress={btn.onPress}>

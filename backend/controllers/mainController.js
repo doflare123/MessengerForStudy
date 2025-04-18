@@ -58,6 +58,7 @@ exports.GetDialods = async (req, res) => {
                     receiver_id: lastMessage.receiver_id,
                     message_content: lastMessage.message_content,
                     data: lastMessage.data,
+                    time: lastMessage.time,
                     status: lastMessage.status
                 } : null
             };

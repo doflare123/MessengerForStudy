@@ -38,18 +38,21 @@ export default function LoginScreen({ navigation }) {
             email: email,
             password: password,
         };
+        
 
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify(message));
+
+            setErrorMessage("Загрузка");
 
             socket.onmessage = async (event) => {
                 const response = JSON.parse(event.data); // Парсим полученные данные
                 
                 if (response.success){
                     await AsyncStorage.setItem('JwtToken', response.data.refreshToken);
+                    await AsyncStorage.setItem('Avatar', response.data.avatar);
                     await AsyncStorage.setItem('AccesToken', response.data.accessToken);
                     
-                    console.log("JwtToken", await GetToken()) 
                     setErrorMessage("");
                     navigation.replace("Dialogs");
                 }

@@ -5,7 +5,7 @@ dotenv.config({ path: "./.env" });
 
 async function LoginCheck(ws, { email, password }) {
     try {
-        const response = await axios.post(process.env.URL_CKECK_LOGIN, { email, password });
+        const response = await axios.get(process.env.URL_CKECK_LOGIN, { params: {email, password} });
         ws.send(JSON.stringify({success: true, data: response.data})); // Успешный ответ клиенту
     } catch (err) {
         console.error('Ошибка при отправке запроса:', err.message);

@@ -3,7 +3,8 @@ import { WebSocketServer } from 'ws';
 
 async function CheckCode(ws, {code, sessionId} ) {
     try {
-        const response = await axios.patch(process.env.URL_CKECK_CODECONFIRM, { sessionId, code, type: 'reg' });
+        console.log(code, sessionId)
+        const response = await axios.post(process.env.URL_CKECK_CODECONFIRM, { sessionId, code, type: 'reg' });
         ws.send(JSON.stringify({success: true, data: response.data})); //успешный ответ клиенту
     } catch (err) {
         console.error('Ошибка при отправке запроса:', err.message);

@@ -9,8 +9,11 @@ import Icon from 'react-native-vector-icons/AntDesign.js';
 import Icon2 from 'react-native-vector-icons/Entypo.js';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
+import { useWebSocket } from '@/WebSoket/WSConnection';
+import { decodeJwt, GetToken} from '../../../JwtTokens/JwtStorege.js';
 
 export default function DialogsScreen({ route }) {
+    const socket = useWebSocket();
     const [lightStyle, setLight] = useState(true);
     const [messages, setMessages] = useState([]);
     const navigation = useNavigation();
@@ -30,10 +33,61 @@ export default function DialogsScreen({ route }) {
         navigation.replace("Chat", { id, name });
     };
 
+    const [JwtToken, setJwtToken] = useState(); 
+
     useEffect(() => {
-        addMessage(require("../../../assets/images/avatar_example.jpg"), "Roma SS", "Hello my friend!", "04:30", 1);
-        addMessage(require("../../../assets/images/avatar_example.jpg"), "Satoru Gojo", "Прибыл Годжо Сатору", "20:31", 2);
+        const fetchToken = async () => {
+            const token = await GetToken();
+            setJwtToken(token);
+        };
+
+        fetchToken();
     }, []);
+
+    useEffect(() => {
+        if (JwtToken) {
+            try {
+                const message = {
+                    type: 'Alldialogs',
+                    JwtToken: JwtToken,
+                };
+        
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify(message));
+        
+                    socket.onmessage = async (event) => {
+                        const response = JSON.parse(event.data); // Парсим полученные данные
+                        
+                        if (response.success){
+                            response.data.forEach(element => {
+                                const avatar = element.contact.avatar;
+                                const name = element.contact.username;
+                                const msg = element.lastMessage.message_content;
+
+                                const date = new Date(element.lastMessage.time);
+
+                                const time = date.toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: false,
+                                });
+
+                                const email = element.contact.email;
+                                addMessage(avatar, name, msg, time, email);
+                            });
+                        }
+                        
+                    };
+                }
+        
+        
+                //addMessage(require("../../../assets/images/avatar_example.jpg"), "Roma SS", "Hello my friend!", "04:30", 1);
+                //addMessage(require("../../../assets/images/avatar_example.jpg"), "Satoru Gojo", "Прибыл Годжо Сатору", "20:31", 2);
+            } catch (error) {
+                console.error("Ошибка при получении токена: ", error);
+            }
+        }
+    }, [JwtToken]);  
 
     return (
         <KeyboardAvoidingView
@@ -69,7 +123,7 @@ export default function DialogsScreen({ route }) {
                                 <TouchableOpacity onPress={() => toDialog(item.id, item.name)}>
                                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                                         <View style={{ flex: 1.75, justifyContent: 'flex-start', flexDirection: 'row' }}>
-                                            <Image source={item.avatarImg} style={styles.avatar} />
+                                            <Image source={{uri: item.avatarImg}} style={styles.avatar} />
                                             <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                                                 <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 20, marginLeft: 5 }]}>{item.name}</Text>
                                                 <Text style={[lightStyle ? styles.lightName : styles.darkName, { fontSize: 14, marginLeft: 5, opacity: 0.7 }]}>{item.lastMsg}</Text>

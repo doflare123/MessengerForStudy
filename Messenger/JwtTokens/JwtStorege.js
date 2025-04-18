@@ -13,6 +13,18 @@ export const GetToken = async () => {//получение токена из хр
     }
 };
 
+export const GetAvatar = async () => {//получение токена из хранилища
+    try {
+        const avatar = await AsyncStorage.getItem('Avatar');
+        if (avatar !== null) {
+            return avatar;
+        }
+    } catch (error) {
+        console.error('Ошибка при извлечении аватара:', error);
+        return null;
+    }
+};
+
 export const GetUserId = async () => {//получение токена из хранилища
     try {
         const id = await AsyncStorage.getItem('_id');

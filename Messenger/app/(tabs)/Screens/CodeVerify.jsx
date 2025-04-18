@@ -61,6 +61,7 @@ export default function VerifyScreen({ route }) {
             name: name,
             email: email,
             password: password,
+            session: session,
         };
         
         socket.send(JSON.stringify(message));

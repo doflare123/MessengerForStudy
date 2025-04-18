@@ -46,7 +46,7 @@ export default function ChatScreen({ route }) {
                     <View style={{ height: 60 }}>
                         <View style={{ height: 50, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={() => navigation.goBack()}>
+                                <TouchableOpacity onPress={() => navigation.replace("Dialogs")}>
                                     <Icon name={'arrowleft'} size={45} style={[lightStyle ? styles.lightMsgEmoji : styles.darkMsgEmoji, { marginLeft: 10 }]} />
                                 </TouchableOpacity>
                             </View>
