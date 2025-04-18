@@ -264,6 +264,7 @@ app.get('/api/CheckSession/Verify', async (req, res) => {
     if (!sessionObj) return res.status(404).json({ message: "Сессия не найдена" });
 
     if (sessionObj.Verified) {
+      await sessionObj.destroy();
       return res.status(200).json({ Verified: true });
     } else {
       return res.status(200).json({ Verified: false });
