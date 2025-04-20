@@ -1,49 +1,46 @@
 import axios from 'axios';
 
-async function Sentmess(ws, { DataTime, JwtToken, recipient, sender, text, Data }, usersSockets) {
+async function Sentmess(ws, {JwtToken, messageContent, contactEmail}, usersSockets) {
     try {
-        const recipientSocket = usersSockets.get(recipient);
+        const recipientSocket = usersSockets.get(contactEmail);
 
         if (recipientSocket) {
-            console.log('Recipient socket найден:', recipientSocket);
+            console.log('Recipient socket найден:');
             
             // Проверяем текущее состояние сокета
-            console.log('Состояние recipientSocket:', recipientSocket.readyState);
+            console.log('Состояние recipientSocket:');
 
             // Если состояние сокета открытое, продолжаем отправку
             if (recipientSocket.readyState === WebSocket.OPEN) {
                 console.log('Сокет готов к отправке данных');
                 try {
-                    const response = await axios.post(process.env.URL_CKECK_SENTMESSEGE, { DataTime, JwtToken, recipient, sender, text, Data });
+                    const response = await axios.post(process.env.URL_CKECK_SENTMESSEGE, { messageContent, contactEmail }, {headers: {'Authorization': `Bearer ${JwtToken}`}});
                     
                     // Если запрос прошел успешно, отправляем сообщение оппоненту
                     recipientSocket.send(JSON.stringify({
                         success: true,
                         type: 'NewMessage',
                         data: {
-                            _id: response.data._id, // Уникальный ID сообщения
-                            sender,
-                            text,
-                            time: DataTime,
-                            data: Data,
+                            isUser: false,
+                            text: messageContent,
                         },
                     }));
                 
-                    console.log('Ответ от axios:', response.data);
+                    console.log('Ответ от axios:');
                 } catch (error) {
-                    console.log('Ошибка при запросе:', error.message);
+                    console.log('Ошибка при запросе:');
                 
                 }                
                 
             } else {
-                console.log("Сокет оппонента не открыт, состояние:", recipientSocket.readyState);
+                console.log("Сокет оппонента не открыт, состояние:");
             }
         } else {
             console.log('Recipient socket не найден');
         }
         console.log("Почти конец!")
     } catch (err) {
-        console.error('Ошибка при отправке запроса:', err.message);
+        console.error('Ошибка при отправке запроса:');
         ws.send(JSON.stringify({ success: false, message: 'Не удалось отправить сообщение' }));
     }
 }

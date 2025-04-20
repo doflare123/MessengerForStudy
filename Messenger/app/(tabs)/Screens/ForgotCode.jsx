@@ -59,7 +59,7 @@ export default function VerifyScreen({ route }) {
                 
                 if (response.success){
                     setErrorMessage("");
-                    navigation.replace("ForgotPswd", {email});
+                    navigation.replace("ForgotPswd", {email, session});
                 }
                 else
                     setErrorMessage("Неверный код");

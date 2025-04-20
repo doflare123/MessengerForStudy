@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
     Text, TextInput, TouchableOpacity, StyleSheet, View, KeyboardAvoidingView, 
     TouchableWithoutFeedback, Keyboard, Platform, FlatList, Image
@@ -17,15 +17,78 @@ export default function DialogsScreen({ route }) {
     const [lightStyle, setLight] = useState(true);
     const [messages, setMessages] = useState([]);
     const navigation = useNavigation();
+    const [messagesBackup, setMessagesBackup] = useState([]);
+    const [searchValue, setSearch] = useState("");
 
     const addMessage = (avatarImg, name, lastMsg, lastTime, id) => {
         const newMessage = { id, avatarImg, name, lastMsg, lastTime };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
+    const clearMessage = () => {
+        setMessages([]);
+    };
+
+    const restoreMessages = () => {
+        if(messagesBackup){
+            clearMessage();
+            setMessages(messagesBackup);
+        };
+    };
+
     const toProfile = (id) => {
         navigation.replace("Profile");
     };
+
+    const hs = async (text) => {
+        setSearch(text);
+    };
+
+    const [first, setFirst] = useState(true);
+    const handleSearch = async () => {
+        if (!searchValue.trim()) {
+            if(first)
+                setFirst(false);
+            else
+                restoreMessages();
+                
+            return;
+        }
+        try {
+            const message = {
+                type: 'SearchUser',
+                searchQuery: searchValue,
+            };
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+
+                socket.onmessage = async (event) => {
+                    const response = JSON.parse(event.data); // Парсим полученные данные
+                    
+                    if (response.success){
+                        clearMessage();
+                        response.data.users.forEach(element => {
+                            const avatar = element.avatar;
+                            const name = element.username;
+
+                            const email = element.email;
+                            addMessage(avatar, name, "", "", email);
+                        });
+                    }
+                };
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    };
+
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            handleSearch();
+        }, 500);
+
+        return () => clearTimeout(timerId);
+    }, [searchValue]);
 
 
     const toDialog = (id, name) => {
@@ -59,22 +122,25 @@ export default function DialogsScreen({ route }) {
                         const response = JSON.parse(event.data); // Парсим полученные данные
                         
                         if (response.success){
-                            response.data.forEach(element => {
+                            const newMessages = response.data.map(element => {
                                 const avatar = element.contact.avatar;
                                 const name = element.contact.username;
                                 const msg = element.lastMessage.message_content;
-
+                        
                                 const date = new Date(element.lastMessage.time);
-
                                 const time = date.toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                  hour12: false,
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
                                 });
-
+                        
                                 const email = element.contact.email;
-                                addMessage(avatar, name, msg, time, email);
+                        
+                                return { id: email, avatarImg: avatar, name, lastMsg: msg, lastTime: time };
                             });
+                        
+                            setMessages(newMessages);
+                            setMessagesBackup(newMessages);
                         }
                         
                     };
@@ -110,6 +176,8 @@ export default function DialogsScreen({ route }) {
                                     placeholder="🔍Поиск" 
                                     placeholderTextColor="#888" 
                                     textAlign="left" 
+                                    value={searchValue}
+                                    onChangeText={hs}
                                 />
                             </View>
                         </View>

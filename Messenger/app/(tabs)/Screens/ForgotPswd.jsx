@@ -17,7 +17,7 @@ export default function LoginScreen({ route }) {
     const [errorMessage, setErrorMessage] = useState("");
     const navigation = useNavigation();
 
-    const { email } = route.params || {};
+    const { email, session } = route.params || {};
 
     const handlePswd2Change = (text) => {
         setPassword2(text);
@@ -38,6 +38,7 @@ export default function LoginScreen({ route }) {
             type: 'ChangePassFogive',
             email: email,
             newPswd: password,
+            session: session,
         };
 
         console.log("email", email)
