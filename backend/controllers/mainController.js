@@ -95,17 +95,27 @@ exports.GetMessages = async (req, res) => {
 
         const messages = await Messege.find({
             $or: [
-                { sender_id: sender.id, receiver_id: contact.id },
-                { sender_id: contact.id, receiver_id: sender.id }
+                { sender_id: sender.id.toString(), receiver_id: contact.id.toString() },
+                { sender_id: contact.id.toString(), receiver_id: sender.id.toString() }
             ]
         }).sort({ time: -1 });
 
-        res.status(200).json({ messages });
+        const formattedMessages = messages.map(msg => ({
+            sender_name: msg.sender_id === sender.id.toString() ? sender.username : contact.username,
+            receiver_name: msg.receiver_id === sender.id.toString() ? sender.username : contact.username,
+            message_content: msg.message_content,
+            data: msg.data,
+            time: msg.time,
+            status: msg.status
+        }));
+
+        res.status(200).json({ messages: formattedMessages });
     } catch (error) {
         console.warn(error);
         res.status(500).json({ message: 'Произошла ошибка на сервере' });
     }
 };
+
 
 exports.SearchUser = async (req, res) => {
     const { searchQuery } = req.body; 
