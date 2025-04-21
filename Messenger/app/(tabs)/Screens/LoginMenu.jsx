@@ -101,8 +101,10 @@ export default function LoginScreen({ navigation }) {
                             </TouchableOpacity>
                         </View>
                          {errorMessage ? <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{errorMessage}</Text> : null}
-                        <TouchableOpacity onPress={toForgotScreen}>
-                            <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, {fontSize: 15, marginTop: Platform.OS === 'android' ? -60 : 0, textAlign: 'right'}]}>Забыли пароль?</Text>
+                        <TouchableOpacity onPress={toForgotScreen} style={{marginTop: -90}}>
+                        <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, { fontSize: 15, textAlign: 'right' }]}>
+                            Забыли пароль?
+                        </Text>
                         </TouchableOpacity>
                         <View style={styles.viewEnd}>
                             <TouchableOpacity style={[lstyles.enterBtn, lightStyle ? styles.lightBtn : styles.darkBtn]} onPress={toDialogsScreen}>
