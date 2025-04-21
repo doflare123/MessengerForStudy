@@ -8,12 +8,14 @@ import { useNavigation } from '@react-navigation/native';
 import { useWebSocket } from '@/WebSoket/WSConnection';
 
 import styles from '../../Styles/Styles.js';
+import { useTheme } from '../../../ThemeContext.js';
 
 export default function LoginScreen({ route }) {
     const socket = useWebSocket();
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
-    const [lightStyle, setLight] = useState(true);
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const [errorMessage, setErrorMessage] = useState("");
     const navigation = useNavigation();
 

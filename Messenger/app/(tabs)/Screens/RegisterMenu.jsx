@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import styles from '../../Styles/Styles.js';
 import strings from '../../../assets/Strings.json'
 import { useWebSocket } from '@/WebSoket/WSConnection';
+import { useTheme } from '../../../ThemeContext.js';
 
 export default function RegisterScreen() {
     const socket = useWebSocket();
@@ -17,7 +18,8 @@ export default function RegisterScreen() {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [isSecure, setSecure] = useState(true);
-    const [lightStyle, setLight] = useState(true);
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const [modalVisible, setModalVisible] = useState(false);
     const [modalText, setModalText] = useState("");
     const [errorMessage, setErrorMessage] = useState("");

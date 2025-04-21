@@ -13,9 +13,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { useWebSocket } from '@/WebSoket/WSConnection';
 import { decodeJwt, GetToken, GetAvatar} from '../../../JwtTokens/JwtStorege.js';
 
+import { useTheme } from '../../../ThemeContext.js';
+
 export default function DialogsScreen({ route }) {
+    const { isLight, toggleTheme } = useTheme();
     const socket = useWebSocket();
-    const [lightStyle, setLight] = useState(true);
+    const lightStyle = isLight;
     const [avatar, setAvatar] = useState(null);
     const [userName, setName] = useState("...");
     const navigation = useNavigation();
@@ -163,6 +166,10 @@ export default function DialogsScreen({ route }) {
         { text: "Выйти", onPress: exit }
     ];
 
+    const handleChangeStyle = async (text) => {
+        toggleTheme();
+    };
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -183,7 +190,9 @@ export default function DialogsScreen({ route }) {
                             </View>
                             <Text style={[lightStyle ? styles.headerLight : styles.headerDark, { fontSize: 30, marginLeft: 20 }]}>Профиль</Text>
                             <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'row' }}>
-                                <Icon name={lightStyle ? 'moon' : 'sun'} size={45} style={{ marginRight: 5 }} />
+                                <TouchableOpacity onPress={handleChangeStyle}>
+                                    <Icon name={lightStyle ? 'moon' : 'sun'} size={45} style={{ marginRight: 5 }} />
+                                </TouchableOpacity>
                             </View>
                         </View>
                         <View style={[styles.horizontalLine, { marginTop: 5, backgroundColor: '#186FE1', opacity: 0.6, height: 2 }]}></View>

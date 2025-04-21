@@ -1,6 +1,9 @@
 import React, { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+
+    // light
+
     lightBtn: {
         borderRadius: 30,
         backgroundColor: "#186FE1",
@@ -47,10 +50,6 @@ export default StyleSheet.create({
     },
 
 
-    darkBtn: {
-        backgroundColor: '#F5F8FF',
-
-    },
 
     lightBorderInput: {
         borderRadius: 30,
@@ -133,11 +132,11 @@ export default StyleSheet.create({
 
     lightResend: {
         fontSize: 14,
-        color: 'gray'
+        color: '214D87'
     },
     lightResendActive: {
         fontSize: 14,
-        color: '#3089FF',
+        color: '#214D87',
         textDecorationLine: 'underline'
     },
 
@@ -170,6 +169,125 @@ export default StyleSheet.create({
     lightMsgEmojiBg: {
         backgroundColor: "#D8D8D8",
     },
+
+
+
+
+    // dark
+
+    darkBtn: {
+        borderRadius: 30,
+        backgroundColor: "#214D87",
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    darkText: {
+        fontFamily: "Montserrat",
+        color: "#BDD0FF",
+    },
+    darkName: {
+        fontFamily: "Montserrat",
+        color: "#BDD0FF",
+    },
+    darkTextBg: {
+        fontFamily: "Montserrat",
+        color: "#BDD0FF",
+        opacity: 0.6,
+    },
+    darkTextBg2: {
+        fontFamily: "Montserrat",
+        color: "#214D87",
+    },
+    darkBg: {
+        flex: 1,
+        backgroundColor: "#252525",
+    },
+    darkInput: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#343434',
+        backgroundColor: "#343434",
+        borderRadius: 20,
+        width: '80%',
+        height: 40,
+        paddingHorizontal: 5,
+        placeholderTextColor: "#BDD0FF",
+        paddingLeft: 10
+    },
+    darkDelete: {
+        fontFamily: "Montserrat",
+        color: "#CE0000",
+    },
+
+
+
+    darkBorderInput: {
+        borderRadius: 30,
+        borderWidth: 2,
+        height: 50,
+        paddingLeft: 15,
+        marginTop: 30,
+        borderColor: "#214D87",
+        backgroundColor: "#343434",
+        placeholderTextColor: "#BDD0FF",
+    },
+
+    headerDark: {
+        fontFamily: "MontserratBold",
+        fontSize: 70,
+        color: "#214D87",
+    },
+    companyDark: {
+        color: '#BDD0FF',
+        fontFamily: "Montserrat",
+        opacity: 0.2,
+    },
+
+
+    darkResend: {
+        fontSize: 14,
+        color: 'BDD0FF'
+    },
+    darkResendActive: {
+        fontSize: 14,
+        color: '#BDD0FF',
+        textDecorationLine: 'underline'
+    },
+
+
+    darkMsgUserBg: {
+        backgroundColor: '#29366A'
+    },
+    darkMsgBg: {
+        backgroundColor: '#343434'
+    },
+    darkMsgUser: {
+        color: 'FFFFFF'
+    },
+    darkMsg: {
+        color: 'FFFFFF'
+    },
+    darkMsgInput: {
+        color: 'white'
+    },
+    darkMsgFoot: {
+        borderColor: '#343434', 
+        backgroundColor: '#252525'
+    },
+    darkMsgInBg: {
+        backgroundColor: '#343434'
+    },
+    darkMsgEmoji: {
+        color: '#214D87'
+    },
+    darkMsgEmojiBg: {
+        backgroundColor: "#343434",
+    },
+
+
+
+    // Other
 
 
     avatar: {

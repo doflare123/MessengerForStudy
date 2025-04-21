@@ -7,10 +7,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../Styles/Styles.js';
 import { useWebSocket } from '@/WebSoket/WSConnection';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../../ThemeContext.js';
 
 export default function VerifyScreen({ route }) {
     const socket = useWebSocket();
-    const [lightStyle, setLight] = useState(true);
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const [loadingText, setLoadingText] = useState(".");
     const [code, setCode] = useState();
     const [timer, setTimer] = useState(30);
@@ -129,10 +131,10 @@ export default function VerifyScreen({ route }) {
                         <View style={{ marginTop: 5 }}>
                             {canResend ? (
                                 <TouchableOpacity onPress={handleResend}>
-                                    <Text style={styles.lightResendActive}>Отправить повторно</Text>
+                                    <Text style={lightStyle ? styles.lightResendActive : styles.darkResendActive}>Отправить повторно</Text>
                                 </TouchableOpacity>
                             ) : (
-                                <Text style={styles.lightResend}>Запросить повторно через {timer} секунд</Text>
+                                <Text style={lightStyle ? styles.lightResend : styles.darkResend}>Запросить повторно через {timer} секунд</Text>
                             )}
                         </View>
                         <View style={[styles.viewEnd, {marginTop: Platform.OS === 'ios' ? 200 : 0}]}>                            

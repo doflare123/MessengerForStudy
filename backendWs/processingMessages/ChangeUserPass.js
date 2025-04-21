@@ -7,7 +7,7 @@ async function UserPass(ws, { JwtToken, newPswd }) {
     } catch (err) {
         console.error('Ошибка при отправке запроса:', err.message);
         ws.send(JSON.stringify({ success: false, message: 'Ошибка смены пароля' }));
-    }
+    } 
 }
 
 export default UserPass;

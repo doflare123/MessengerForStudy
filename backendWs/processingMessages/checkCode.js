@@ -10,7 +10,7 @@ async function CheckCode(ws, {code, sessionId} ) {
         console.error('Ошибка при отправке запроса:', err.message);
         ws.send(JSON.stringify({ success: false, message: 'Ошибка при отправке запроса на сервер' }));
         
-    }
+    } 
 }
 
 

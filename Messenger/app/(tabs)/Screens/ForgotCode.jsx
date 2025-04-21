@@ -7,10 +7,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../Styles/Styles.js';
 import { useNavigation } from '@react-navigation/native';
 import { useWebSocket } from '@/WebSoket/WSConnection';
+import { useTheme } from '../../../ThemeContext.js';
 
 export default function VerifyScreen({ route }) {
     const socket = useWebSocket();
-    const [lightStyle, setLight] = useState(true);
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const [loadingText, setLoadingText] = useState(".");
     const [code, setCode] = useState();
     const [timer, setTimer] = useState(30);

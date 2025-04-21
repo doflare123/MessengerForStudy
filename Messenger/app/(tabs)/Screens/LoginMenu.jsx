@@ -7,13 +7,15 @@ import { useWebSocket } from '@/WebSoket/WSConnection';
 import { GetToken } from '../../../JwtTokens/JwtStorege.js';
 
 import styles from '../../Styles/Styles.js';
+import { useTheme } from '../../../ThemeContext.js';
 
 export default function LoginScreen({ navigation }) {
     const socket = useWebSocket();
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [isSecure, setSecure] = useState(true);
-    const [lightStyle, setLight] = useState(true);
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleEmailChange = (text) => {

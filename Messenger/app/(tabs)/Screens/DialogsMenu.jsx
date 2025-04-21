@@ -12,9 +12,12 @@ import { StatusBar } from 'react-native';
 import { useWebSocket } from '@/WebSoket/WSConnection';
 import { decodeJwt, GetToken} from '../../../JwtTokens/JwtStorege.js';
 
+import { useTheme } from '../../../ThemeContext.js';
+
 export default function DialogsScreen({ route }) {
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const socket = useWebSocket();
-    const [lightStyle, setLight] = useState(true);
     const [messages, setMessages] = useState([]);
     const navigation = useNavigation();
     const [messagesBackup, setMessagesBackup] = useState([]);
@@ -58,6 +61,7 @@ export default function DialogsScreen({ route }) {
             const message = {
                 type: 'SearchUser',
                 searchQuery: searchValue,
+                JwtToken: JwtToken,
             };
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify(message));

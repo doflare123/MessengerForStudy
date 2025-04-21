@@ -8,10 +8,12 @@ import styles from '../../Styles/Styles.js';
 import { useNavigation } from '@react-navigation/native';
 import { useWebSocket } from '@/WebSoket/WSConnection';
 import { decodeJwt, GetToken} from '../../../JwtTokens/JwtStorege.js';
+import { useTheme } from '../../../ThemeContext.js';
 
 export default function ChatScreen({ route }) {
     const socket = useWebSocket();
-    const [lightStyle, setLight] = useState(true);
+    const { isLight, toggleTheme } = useTheme();
+    const lightStyle = isLight;
     const { id, name } = route.params;
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
