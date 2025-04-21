@@ -119,17 +119,22 @@ exports.GetMessages = async (req, res) => {
 
 exports.SearchUser = async (req, res) => {
     const { searchQuery } = req.body; 
+    const token = req.headers.authorization?.split(' ')[1];
 
-    if (!searchQuery) {
+    if (!searchQuery || !token) {
         return res.status(400).json({ message: 'Параметр поиска не предоставлен' });
     }
 
     try {
+        const decoded = jwt.verify(token, process.env.Secret_key_Jwt);
+        const senderUsername = decoded.username;
+
         const users = await User.findAll({
             where: {
-                [Op.or]: [
-                    { username: { [Op.like]: `%${searchQuery}%` } }
-                ]
+                username: {
+                    [Op.like]: `%${searchQuery}%`,
+                    [Op.ne]: senderUsername, // исключаем самого себя
+                }
             },
             attributes: ['username', 'email', 'avatar'], 
         });
