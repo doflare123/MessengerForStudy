@@ -95,16 +95,16 @@ export default function LoginScreen({ navigation }) {
                                 placeholder="Введите пароль"
                                 secureTextEntry={isSecure}
                                 onChangeText={handlePswdChange}
-                            />
-                            <TouchableOpacity onPress={handleSecureChange}>
-                                <Icon name={isSecure ? 'eye-off' : 'eye'} size={24} color="#00000" style={{position: "absolute", right: 20, top: -37}}/>
+                              />
+                            <TouchableOpacity onPress={handleSecureChange} style={{position: "absolute", right: 20, top: 43}}>
+                                <Icon name={isSecure ? 'eye-off' : 'eye'} size={24} color="#00000" />
                             </TouchableOpacity>
                         </View>
                          {errorMessage ? <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{errorMessage}</Text> : null}
-                        <TouchableOpacity onPress={toForgotScreen} style={{marginTop: -90}}>
-                        <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, { fontSize: 15, textAlign: 'right' }]}>
-                            Забыли пароль?
-                        </Text>
+                         <TouchableOpacity onPress={toForgotScreen} style={{marginTop: Platform.OS === 'ios' ? 0 : -90}}>
+                            <Text style={[lightStyle ? styles.lightTextBg : styles.darkTextBg, { fontSize: 15, textAlign: 'right'}]}>
+                                Забыли пароль?
+                            </Text>
                         </TouchableOpacity>
                         <View style={styles.viewEnd}>
                             <TouchableOpacity style={[lstyles.enterBtn, lightStyle ? styles.lightBtn : styles.darkBtn]} onPress={toDialogsScreen}>
